@@ -2,10 +2,10 @@
 export type PageType = "HOME" | "TOOLS" | "CHALLENGE" | "AI_PROJECT" | "CONTACT";
 
 export interface LevelData {
-  // Fix: Adding id and difficulty which were missing but used in data.ts
+  // Added id and difficulty to match the data structure used in LEVELS in data.ts
   id: string;
-  difficulty: string;
   title: string;
+  difficulty: string;
   desc: string;
   hint: string;
   fake_pos: 1 | 2; // 1: Left (Trái), 2: Right (Phải)
