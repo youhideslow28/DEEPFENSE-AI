@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -48,8 +49,15 @@
           linear-gradient(rgba(0,240,255,0.02) 1px, transparent 1px),
           linear-gradient(90deg, rgba(0,240,255,0.02) 1px, transparent 1px);
         background-size: 50px 50px;
+        margin: 0;
+        overflow-x: hidden;
       }
-      /* Custom scrollbar */
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+      }
       ::-webkit-scrollbar {
         width: 8px;
       }
@@ -64,19 +72,25 @@
         background: #00F0FF; 
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
-  }
-}
-</script>
-</head>
+    <!-- Polyfill for process.env (Fix blank screen on GitHub) -->
+    <script>
+      window.process = { env: { API_KEY: "" } };
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+      }
+    }
+    </script>
+  </head>
   <body>
     <div id="root"></div>
+    <!-- Entry point: Quan trọng để ứng dụng khởi động -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

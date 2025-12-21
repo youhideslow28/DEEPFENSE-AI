@@ -23,15 +23,24 @@ const AiChat: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
+    // Check if API Key exists to prevent crash on GitHub Pages
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        setMessages(prev => [...prev, 
+            { role: 'user', text: input },
+            { role: 'model', text: '⚠️ Cảnh báo: Agent chưa được cấu hình API Key để hoạt động trên môi trường này.' }
+        ]);
+        setInput('');
+        return;
+    }
+
     const userMsg = input;
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setLoading(true);
 
     try {
-      // Correct: Use process.env.API_KEY directly for initialization.
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      // Updated System Instruction per request: Polite, Concise (bullet points), Beta Aware, Strict Scope
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       const systemInstruction = `
         Bạn là DEEPFENSE AGENT - trợ lý AI chuyên về an ninh mạng và phòng chống Deepfake.
         Bạn đang là phiên bản thử nghiệm (Beta).
@@ -45,12 +54,8 @@ const AiChat: React.FC = () => {
         2. PHẠM VI CHỦ ĐỀ:
            - CHỈ TRẢ LỜI về: Deepfake, lừa đảo trực tuyến, bảo mật, an toàn thông tin, cách phòng tránh.
            - TỪ CHỐI KHÉO LÉO nếu hỏi về: Chính trị, tình cảm, giải trí, code, hoặc các chủ đề không liên quan.
-             Ví dụ: "Là AI chuyên về an ninh mạng (Beta), tôi chưa hỗ trợ chủ đề này. Bạn hãy hỏi tôi về cách nhận biết Deepfake nhé!"
-
-        3. THÁI ĐỘ: Tôn trọng, chuyên nghiệp, hỗ trợ.
       `;
 
-      // Corrected: Use 'gemini-3-flash-preview' for Basic Text Tasks (summarization, Q&A).
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [
@@ -60,11 +65,10 @@ const AiChat: React.FC = () => {
         config: { systemInstruction }
       });
 
-      // Correct: Accessing the .text property directly.
       const text = response.text || "Lỗi kết nối máy chủ.";
       setMessages(prev => [...prev, { role: 'model', text: text }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "Hệ thống đang bảo trì để nâng cấp. Vui lòng thử lại sau." }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Hệ thống đang bảo trì hoặc API Key hết hạn. Vui lòng thử lại sau." }]);
     } finally {
       setLoading(false);
     }
@@ -78,7 +82,6 @@ const AiChat: React.FC = () => {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
       {isOpen && (
         <div className="pointer-events-auto bg-surface border border-primary/30 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] w-[350px] h-[500px] flex flex-col mb-4 overflow-hidden animate-in slide-in-from-bottom-10 fade-in duration-300 relative group">
-            {/* Header with Scanning Effect */}
             <div className="bg-primary/10 border-b border-primary/20 p-4 flex justify-between items-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent w-[50%] h-full animate-[shimmer_2s_infinite] pointer-events-none"></div>
                 
@@ -87,16 +90,14 @@ const AiChat: React.FC = () => {
                     <div>
                         <h3 className="text-white font-bold text-sm tracking-widest font-mono">DEEPFENSE AGENT</h3>
                         <div className="flex items-center gap-1 text-[10px] text-success">
-                            <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></span> SYSTEM ACTIVE (BETA)
+                            <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></span> SYSTEM ACTIVE
                         </div>
                     </div>
                 </div>
                 <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white relative z-10"><X size={20} /></button>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/40 relative">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,240,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,240,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} relative z-10`}>
                         <div className={`max-w-[85%] rounded-lg p-3 text-sm whitespace-pre-wrap ${
@@ -111,7 +112,6 @@ const AiChat: React.FC = () => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="p-3 bg-surface border-t border-gray-800">
                 <div className="flex gap-2">
                     <input 
@@ -131,36 +131,25 @@ const AiChat: React.FC = () => {
                     </button>
                 </div>
                 <div className="text-[9px] text-gray-600 mt-2 text-center flex justify-center items-center gap-1 font-mono uppercase">
-                    <ScanLine size={10} /> Powered by Gemini Neural Core
+                    <ScanLine size={10} /> Neural Defense Protocol
                 </div>
             </div>
         </div>
       )}
 
-      {/* Bubble Attention Grabber - Updated Text */}
       {!isOpen && (
         <div className="pointer-events-auto mb-3 animate-bounce cursor-pointer" onClick={() => setIsOpen(true)}>
              <div className="bg-white text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-lg relative border-2 border-primary hover:scale-105 transition-transform">
-                Dùng AI AGENT ngay!
+                Hỏi AI AGENT!
                 <div className="absolute -bottom-1 right-6 w-3 h-3 bg-white border-r-2 border-b-2 border-primary transform rotate-45"></div>
              </div>
         </div>
       )}
 
-      {/* Toggle Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="pointer-events-auto bg-primary text-black p-4 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:bg-white hover:scale-110 transition-all duration-300 group relative overflow-visible"
+        className="pointer-events-auto bg-primary text-black p-4 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:bg-white hover:scale-110 transition-all duration-300 group relative"
       >
-        {/* Ripple Effect */}
-        {!isOpen && (
-             <div className="absolute inset-0 rounded-full border-2 border-primary opacity-0 animate-[ping_2s_infinite]"></div>
-        )}
-        {!isOpen && (
-             <div className="absolute -inset-3 rounded-full border border-primary/50 opacity-0 animate-[ping_2.5s_infinite]"></div>
-        )}
-
-        <div className="absolute inset-0 bg-white/20 rounded-full animate-ping opacity-20"></div>
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
       </button>
     </div>
