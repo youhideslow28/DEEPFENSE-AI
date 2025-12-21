@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { CHECKLIST_DATA } from '../data';
-import { ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, Info, Gavel, Smartphone } from 'lucide-react';
+import { ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, Info, Gavel, Smartphone, ScanSearch } from 'lucide-react';
+import AiVideoScanner from '../components/AiVideoScanner';
 
 const KnowledgeItem = ({ title, children }: { title: string, children?: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,11 +25,11 @@ const KnowledgeItem = ({ title, children }: { title: string, children?: React.Re
 }
 
 interface ToolsProps {
-  initialTab?: 'SCAN' | 'KNOWLEDGE';
+  initialTab?: 'SCAN' | 'KNOWLEDGE' | 'NEURAL';
 }
 
-const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
-  const [activeTab, setActiveTab] = useState<'SCAN' | 'KNOWLEDGE'>(initialTab);
+const Tools: React.FC<ToolsProps> = ({ initialTab = 'NEURAL' }) => {
+  const [activeTab, setActiveTab] = useState<'SCAN' | 'KNOWLEDGE' | 'NEURAL'>(initialTab);
   const [checks, setChecks] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<number | null>(null);
 
@@ -40,7 +42,6 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
 
   const analyzeRisk = () => {
     setResult(checks.size);
-    // Scroll to result
     setTimeout(() => {
         const el = document.getElementById('risk-result');
         el?.scrollIntoView({ behavior: 'smooth' });
@@ -51,21 +52,37 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
     <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
       {/* Tabs */}
       <div className="flex justify-center mb-10">
-          <div className="bg-surface p-1 rounded-lg border border-border inline-flex">
+          <div className="bg-surface p-1 rounded-lg border border-border inline-flex flex-wrap justify-center">
+            <button 
+                onClick={() => setActiveTab('NEURAL')}
+                className={`px-6 py-3 rounded-md font-bold text-[10px] transition-all flex items-center gap-2 tracking-widest uppercase ${activeTab === 'NEURAL' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+            >
+                <ScanSearch size={14} /> NEURAL SCAN
+            </button>
             <button 
                 onClick={() => setActiveTab('SCAN')}
-                className={`px-8 py-3 rounded-md font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'SCAN' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                className={`px-6 py-3 rounded-md font-bold text-[10px] transition-all flex items-center gap-2 tracking-widest uppercase ${activeTab === 'SCAN' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
             >
-                ⚡ QUICK SCAN
+                ⚡ QUICK CHECK
             </button>
             <button 
                 onClick={() => setActiveTab('KNOWLEDGE')}
-                className={`px-8 py-3 rounded-md font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'KNOWLEDGE' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                className={`px-6 py-3 rounded-md font-bold text-[10px] transition-all flex items-center gap-2 tracking-widest uppercase ${activeTab === 'KNOWLEDGE' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
             >
                 📚 KIẾN THỨC
             </button>
           </div>
       </div>
+
+      {activeTab === 'NEURAL' && (
+        <div className="space-y-8">
+            <div className="text-center mb-6">
+                <h2 className="text-3xl font-serif font-bold mb-3 text-white uppercase italic">NEURAL VISION AGENT</h2>
+                <p className="text-gray-500 max-w-2xl mx-auto">Công nghệ AI thực thụ để phân tích pixel và các điểm ảnh lỗi trong Deepfake.</p>
+            </div>
+            <AiVideoScanner />
+        </div>
+      )}
 
       {activeTab === 'SCAN' && (
         <div>
@@ -128,42 +145,6 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
                             <p className="text-white font-bold text-lg">99% ĐÂY LÀ LỪA ĐẢO. NGẮT KẾT NỐI NGAY LẬP TỨC!</p>
                         </div>
                     )}
-
-                    <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 shadow-2xl">
-                        <h3 className="text-white font-bold text-xl mb-6 flex items-center gap-3 border-b border-gray-700 pb-4">
-                            <ShieldCheck className="text-primary"/> QUY TRÌNH XỬ LÝ KHẨN CẤP
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 text-white font-bold shrink-0">1</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Ngắt cuộc gọi ngay</strong>
-                                    <p className="text-sm text-gray-400">Không nghe giải thích, không chần chừ.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white font-bold shrink-0">2</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Xác minh chéo</strong>
-                                    <p className="text-sm text-gray-400">Gọi lại bằng số điện thoại di động (GSM) thông thường.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold shrink-0">3</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Kiểm tra "Liveness"</strong>
-                                    <p className="text-sm text-gray-400">Yêu cầu người gọi quay mặt sang trái/phải hoặc đưa tay lên che mặt.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white font-bold shrink-0">4</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Báo cáo cơ quan</strong>
-                                    <p className="text-sm text-gray-400">Liên hệ 113 hoặc ngân hàng nếu đã lỡ chuyển tiền.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             )}
         </div>
@@ -176,8 +157,6 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
                 <p className="text-gray-500">Hiểu rõ kẻ thù để phòng vệ hiệu quả hơn</p>
             </div>
             
-            {/* Sắp xếp: Hành động > Bản chất > Lý do > Phòng ngừa > Pháp lý */}
-
             <KnowledgeItem title="✅ QUY TRÌNH XÁC THỰC 4 BƯỚC (QUAN TRỌNG NHẤT)">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
@@ -192,87 +171,6 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
                             <div className="text-[0.6rem] text-gray-500">{s.sub}</div>
                         </div>
                     ))}
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="⚙️ DEEPFENSE HOẠT ĐỘNG NHƯ NÀO? (DỄ HIỂU)">
-                 <div className="mb-4 text-gray-300">
-                    Deepfake sử dụng 2 hệ thống AI đấu đá lẫn nhau (gọi là GANs), hãy tưởng tượng như sau:
-                 </div>
-                 <div className="flex flex-col md:flex-row gap-4 mb-6 items-stretch justify-center">
-                    <div className="bg-black/40 p-5 rounded flex-1 border border-secondary/30 text-center">
-                        <div className="text-4xl mb-2">🎨</div>
-                        <div className="text-secondary font-bold mb-2">AI TẠO GIẢ (Họa sĩ lừa đảo)</div>
-                        <p className="text-xs text-gray-400">Cố gắng vẽ khuôn mặt giả sao cho giống thật nhất có thể để đánh lừa.</p>
-                    </div>
-                    
-                    <div className="flex items-center justify-center text-gray-500 font-bold">VS</div>
-
-                    <div className="bg-black/40 p-5 rounded flex-1 border border-success/30 text-center">
-                        <div className="text-4xl mb-2">👮</div>
-                        <div className="text-success font-bold mb-2">AI SOI LỖI (Cảnh sát giám định)</div>
-                        <p className="text-xs text-gray-400">Cố gắng phát hiện ra đâu là ảnh giả. Nếu phát hiện được, bắt AI kia vẽ lại.</p>
-                    </div>
-                 </div>
-                 <div className="bg-primary/5 p-4 rounded text-sm text-gray-300 text-center border border-primary/20">
-                    <strong className="text-primary">KẾT QUẢ:</strong> Sau hàng triệu lần "đấu đá", AI Tạo Giả sẽ vẽ giỏi đến mức AI Soi Lỗi không nhận ra được nữa. Đó là lúc Deepfake hoàn thiện.
-                 </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="🧠 TẠI SAO MẮT NGƯỜI DỄ BỊ LỪA?">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-black/40 p-5 rounded border-l-4 border-primary">
-                        <div className="text-primary font-bold mb-3 flex items-center gap-2"><Info size={16}/> NGUYÊN NHÂN TÂM LÝ</div>
-                        <ul className="text-sm text-gray-300 space-y-3 list-disc list-inside">
-                            <li>Não bộ con người ưu tiên tin vào <strong className="text-white">thị giác</strong> hơn các giác quan khác.</li>
-                            <li>Kẻ lừa đảo thường tạo <strong className="text-white">tình huống khẩn cấp</strong> (tai nạn, cấp cứu) khiến nạn nhân hoảng loạn, bỏ qua tư duy phản biện.</li>
-                            <li>Sự tin tưởng vào người thân/cấp trên làm giảm sự đề phòng.</li>
-                        </ul>
-                    </div>
-                    <div className="bg-black/40 p-5 rounded border-l-4 border-success">
-                        <div className="text-success font-bold mb-3 flex items-center gap-2"><ShieldCheck size={16}/> GIẢI PHÁP TÂM LÝ</div>
-                        <ul className="text-sm text-gray-300 space-y-3 list-disc list-inside">
-                            <li>Luôn tuân thủ nguyên tắc: <strong className="text-white">"Chậm lại 1 nhịp"</strong>.</li>
-                            <li>Tự đặt câu hỏi: "Tại sao họ lại hối thúc mình chuyển tiền?".</li>
-                            <li>Thiết lập "Mật khẩu gia đình" (Code word) để xác thực người thân.</li>
-                        </ul>
-                    </div>
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="📱 VỆ SINH SỐ (DIGITAL HYGIENE)">
-                <div className="flex gap-4 items-start">
-                    <div className="bg-surface p-3 rounded-full border border-gray-700 shrink-0">
-                        <Smartphone className="text-blue-400" size={24} />
-                    </div>
-                    <div>
-                        <p className="text-gray-300 text-sm mb-3">
-                            Để tránh bị lấy hình ảnh làm nguyên liệu huấn luyện Deepfake, bạn nên:
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🔒 Hạn chế đăng ảnh rõ mặt ở chế độ Công khai (Public).</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🚫 Không chia sẻ dữ liệu sinh trắc học bừa bãi.</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">👀 Cẩn trọng với các ứng dụng "Xem khuôn mặt già đi" hoặc "Ghép mặt vào phim".</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🔐 Bật xác thực 2 bước (2FA) cho mọi tài khoản MXH.</div>
-                        </div>
-                    </div>
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="⚖️ PHÁP LÝ & XỬ PHẠT TẠI VIỆT NAM">
-                <div className="flex gap-4 items-start">
-                    <div className="bg-surface p-3 rounded-full border border-gray-700 shrink-0">
-                        <Gavel className="text-warning" size={24} />
-                    </div>
-                    <div>
-                        <p className="text-gray-300 text-sm mb-3">
-                            Theo pháp luật Việt Nam, hành vi sử dụng Deepfake để lừa đảo chiếm đoạt tài sản có thể bị truy cứu trách nhiệm hình sự:
-                        </p>
-                        <ul className="space-y-2 text-sm text-gray-400">
-                            <li className="flex gap-2"><span className="text-warning">•</span> <strong>Tội lừa đảo chiếm đoạt tài sản (Điều 174 BLHS):</strong> Phạt tù lên đến 20 năm hoặc tù chung thân.</li>
-                            <li className="flex gap-2"><span className="text-warning">•</span> <strong>Tội sử dụng mạng máy tính thực hiện hành vi chiếm đoạt tài sản (Điều 290 BLHS):</strong> Phạt tù lên đến 20 năm.</li>
-                        </ul>
-                    </div>
                 </div>
             </KnowledgeItem>
         </div>

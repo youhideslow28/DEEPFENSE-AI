@@ -1,53 +1,32 @@
 
 import React, { useState, useEffect } from 'react';
-import { LEVELS, PERSONALITY_QUESTIONS } from '../data';
-import { GameState, UserSession, GameHistoryItem, LikertScale, PersonalityTestResult } from '../types';
-import { RefreshCcw, PlayCircle, CheckCircle2, XCircle, UserPlus, Save, UploadCloud, ShieldAlert, BookOpen } from 'lucide-react';
+import { LEVELS } from '../data';
+import { GameState, UserSession } from '../types';
+import { CheckCircle2, XCircle, BrainCircuit, Cpu, Zap, Info, Search, ShieldCheck } from 'lucide-react';
+import { GoogleGenAI } from "@google/genai";
 
 const STORAGE_KEY = 'DEEPFENSE_USER_DATA';
 const GAME_STATE_KEY = 'DEEPFENSE_GAME_STATE';
 
 const getEmbedUrl = (url: string) => {
     if (!url) return "";
-    // Xử lý các định dạng link youtube phổ biến (shorts, watch?, share, v.v.)
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
     const match = url.match(regExp);
     const videoId = (match && match[2].length === 11) ? match[2] : null;
 
     if (videoId) {
-      // Thêm origin để tránh lỗi embedding 153/403
       const origin = window.location.origin;
       return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&controls=1&origin=${encodeURIComponent(origin)}`;
     }
     return url;
 };
 
-const LikertOption: React.FC<{ 
-    qId: string, 
-    value: LikertScale, 
-    label: string, 
-    onClick: (qId: string, value: LikertScale) => void,
-    activeValue?: LikertScale 
-}> = ({ qId, value, label, onClick, activeValue }) => (
-    <div 
-        onClick={() => onClick(qId, value)}
-        className={`flex-1 cursor-pointer transition-all p-3 rounded-lg border flex flex-col items-center gap-1 ${activeValue === value 
-            ? 'bg-primary border-primary text-black font-bold' 
-            : 'bg-black/40 border-gray-800 text-gray-500 hover:bg-gray-800'}`}
-    >
-        <div className="text-xl">{['😡', '😟', '😐', '🙂', '🤩'][value - 1]}</div>
-        <div className="text-[8px] uppercase font-bold text-center mt-1">{label}</div>
-    </div>
-);
-
 const Challenge: React.FC = () => {
   const [user, setUser] = useState<UserSession | null>(null);
   const [usernameInput, setUsernameInput] = useState('');
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [personalityAnswers, setPersonalityAnswers] = useState<Record<string, LikertScale>>({});
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem(STORAGE_KEY);
@@ -59,35 +38,18 @@ const Challenge: React.FC = () => {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!usernameInput.trim()) return;
-    const existingData = localStorage.getItem(STORAGE_KEY);
-    let session: UserSession = existingData ? { ...JSON.parse(existingData), username: usernameInput } : { username: usernameInput, history: [] };
-    setUser(session);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-    startNewGame();
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setGameState(null);
-    localStorage.removeItem(GAME_STATE_KEY);
-  };
-
   const startNewGame = () => {
     const shuffled = [...LEVELS].sort(() => 0.5 - Math.random()).slice(0, 10);
     const newState = { levels: shuffled, current: 0, score: 0, wrong_count: 0, wrong_topics: [], finished: false, show_result: false, last_correct: null };
     setGameState(newState);
-    setShowFeedback(false);
-    setPersonalityAnswers({});
-    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(newState));
+    setAiAnalysis(null);
   };
 
-  const handleChoice = (choice: 1 | 2) => {
+  const handleChoice = async (choice: 1 | 2) => {
     if (!gameState) return;
     const currentLevel = gameState.levels[gameState.current];
     const isCorrect = currentLevel.fake_pos === choice;
+    
     setGameState(prev => prev ? ({
         ...prev,
         show_result: true,
@@ -96,229 +58,245 @@ const Challenge: React.FC = () => {
         wrong_count: !isCorrect ? prev.wrong_count + 1 : prev.wrong_count,
         wrong_topics: !isCorrect ? [...prev.wrong_topics, currentLevel.title] : prev.wrong_topics
     }) : null);
+
+    generateForensicReport(currentLevel);
+  };
+
+  const generateForensicReport = async (level: any) => {
+    setIsAnalyzing(true);
+    setAiAnalysis(null);
+    try {
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const prompt = `
+            Đóng vai chuyên gia Neural Forensic. Phân tích video YouTube: "${level.title}".
+            Bên ${level.fake_pos === 1 ? "Trái" : "Phải"} là AI Deepfake.
+            Hãy viết một báo cáo so sánh lỗi sai cực kỳ kỹ thuật và chuyên sâu.
+            YÊU CẦU:
+            - So sánh: Người thật (Baseline) vs AI (Artifacts).
+            - Chỉ ra điểm yếu pixel cụ thể trong video này (ví dụ: texture da, viền môi, ánh sáng mắt).
+            - Trình bày dạng danh sách gạch đầu dòng, ngôn ngữ sắc bén, ngắn gọn.
+            - Kết luận bằng 1 câu về "Deepfake Signature" phát hiện được.
+        `;
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: [{ parts: [{ text: prompt }] }]
+        });
+        setAiAnalysis(response.text || "Dữ liệu phân tích trống.");
+    } catch (e) {
+        setAiAnalysis("Lỗi kết nối Neural Core. Sử dụng dữ liệu offline.");
+    } finally {
+        setIsAnalyzing(false);
+    }
   };
 
   const nextLevel = () => {
     if (!gameState) return;
-    if (gameState.current >= gameState.levels.length - 1) setShowFeedback(true);
-    else setGameState(prev => prev ? ({ ...prev, current: prev.current + 1, show_result: false }) : null);
-  };
-
-  const saveAndFinish = () => {
-    if (!gameState || !user) return;
-    if (Object.keys(personalityAnswers).length < PERSONALITY_QUESTIONS.length) {
-        alert("Vui lòng hoàn thành khảo sát.");
-        return;
+    if (gameState.current >= gameState.levels.length - 1) {
+        setGameState(prev => prev ? ({ ...prev, finished: true }) : null);
+    } else {
+        setGameState(prev => prev ? ({ ...prev, current: prev.current + 1, show_result: false }) : null);
+        setAiAnalysis(null);
     }
-    setIsUploading(true);
-    const interval = setInterval(() => {
-        setUploadProgress(prev => {
-            if (prev >= 100) {
-                clearInterval(interval);
-                setTimeout(finishGame, 500);
-                return 100;
-            }
-            return prev + 10;
-        });
-    }, 100);
   };
-
-  const finishGame = () => {
-    if (!gameState || !user) return;
-    const result: PersonalityTestResult = { answers: personalityAnswers };
-    const newHistoryItem: GameHistoryItem = { id: Date.now().toString(), timestamp: Date.now(), score: gameState.score, wrong_topics: gameState.wrong_topics, personality: result };
-    const updatedUser = { ...user, history: [newHistoryItem, ...user.history] };
-    setUser(updatedUser);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
-    setGameState(prev => prev ? ({ ...prev, finished: true }) : null);
-    setShowFeedback(false);
-    setIsUploading(false);
-  };
-
-  if (isUploading) {
-    return (
-        <div className="min-h-[50vh] flex flex-col items-center justify-center">
-            <div className="bg-surface border border-primary/20 p-8 rounded-2xl text-center max-w-xs w-full">
-                <UploadCloud size={40} className="text-primary animate-bounce mx-auto mb-4" />
-                <h3 className="text-white font-bold text-sm mb-4 uppercase tracking-widest">ĐANG LƯU KẾT QUẢ...</h3>
-                <div className="h-1.5 w-full bg-gray-900 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
-                </div>
-            </div>
-        </div>
-    )
-  }
 
   if (!user) {
     return (
-        <div className="min-h-[50vh] flex flex-col items-center justify-center">
-            <div className="bg-surface border border-primary/20 p-8 rounded-2xl shadow-xl max-w-xs w-full">
-                 <div className="text-center mb-6">
-                     <UserPlus size={32} className="text-primary mx-auto mb-4" />
-                     <h2 className="text-xl font-bold text-white uppercase italic">ĐĂNG KÝ AGENT</h2>
-                 </div>
-                 <form onSubmit={handleLogin} className="space-y-4">
+        <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="bg-surface border border-primary/20 p-10 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+                 <Cpu size={48} className="text-primary mx-auto mb-6 animate-spin-slow" />
+                 <h2 className="text-2xl font-black text-white mb-2 italic uppercase">AUTHENTICATION</h2>
+                 <p className="text-gray-500 text-xs mb-8 uppercase tracking-widest font-mono">Nhập Agent ID để truy cập hệ thống quét</p>
+                 <form onSubmit={(e) => { e.preventDefault(); setUser({username: usernameInput, history: []}); startNewGame(); }} className="space-y-4">
                      <input 
                          type="text" value={usernameInput} onChange={(e) => setUsernameInput(e.target.value)}
-                         className="w-full bg-black border border-gray-800 rounded-lg p-3 text-center font-mono text-primary font-bold text-sm outline-none uppercase"
-                         placeholder="TÊN CỦA BẠN..." autoFocus
+                         className="w-full bg-black border border-gray-800 rounded-xl p-4 text-center font-mono text-primary font-bold text-lg outline-none uppercase tracking-tighter"
+                         placeholder="ID-NUMBER-XXX" autoFocus
                      />
-                     <button 
-                         type="submit" disabled={!usernameInput.trim()}
-                         className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:scale-105 transition-all text-xs uppercase"
-                     >
-                         BẮT ĐẦU
-                     </button>
+                     <button type="submit" className="w-full bg-primary text-black font-black py-4 rounded-xl hover:bg-white transition-all text-xs uppercase shadow-[0_0_20px_rgba(0,240,255,0.3)]">KÍCH HOẠT QUÉT</button>
                  </form>
             </div>
         </div>
     )
   }
 
-  if (showFeedback && gameState) {
-      return (
-          <div className="max-w-2xl mx-auto py-8">
-              <div className="text-center mb-10">
-                  <h2 className="text-3xl font-bold text-white mb-2 uppercase italic">KHẢO SÁT TÂM LÝ</h2>
-              </div>
-              <div className="bg-surface border border-gray-800 rounded-2xl p-8 space-y-8">
-                  {PERSONALITY_QUESTIONS.map((q) => (
-                      <div key={q.id}>
-                          <h4 className="text-white font-bold text-sm mb-4 flex items-center gap-3">
-                              <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                              {q.text}
-                          </h4>
-                          <div className="flex gap-2">
-                              {[1, 2, 3, 4, 5].map(v => (
-                                <LikertOption 
-                                  key={v} qId={q.id} value={v as LikertScale} 
-                                  label={['Rất thấp', 'Thấp', 'Vừa', 'Cao', 'Rất cao'][v-1]}
-                                  onClick={(id, val) => setPersonalityAnswers(prev => ({...prev, [id]: val}))}
-                                  activeValue={personalityAnswers[q.id]}
-                                />
-                              ))}
-                          </div>
-                      </div>
-                  ))}
-                  <button 
-                      onClick={saveAndFinish}
-                      className="w-full bg-success text-black font-bold py-4 rounded-xl hover:brightness-110 transition-all uppercase text-sm tracking-widest"
-                  >
-                      KẾT THÚC & LƯU
-                  </button>
-              </div>
-          </div>
-      )
-  }
-
   if (gameState && gameState.finished) {
     return (
-      <div className="flex flex-col items-center py-8 max-w-xl mx-auto">
-        <div className="text-center mb-8 bg-surface border border-gray-800 p-10 rounded-2xl w-full">
-            <h2 className="text-[10px] text-gray-500 font-mono mb-4 tracking-widest uppercase">Báo cáo tổng kết</h2>
-            <div className="text-7xl font-black text-white mb-6">
-                {gameState.score}<span className="text-2xl text-gray-700">/10</span>
+      <div className="flex flex-col items-center py-10 max-w-2xl mx-auto animate-in zoom-in duration-500">
+        <div className="bg-surface border border-white/5 p-12 rounded-3xl w-full text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+            <h2 className="text-gray-500 font-mono text-[10px] mb-6 tracking-[0.5em] uppercase">Missions Summary Completed</h2>
+            <div className="text-8xl font-black text-white mb-2 italic">
+                {gameState.score}<span className="text-2xl text-gray-700 not-italic">/10</span>
             </div>
-            <div className="text-sm font-bold text-primary uppercase mb-8 border-y border-gray-800 py-3 italic">
-                AGENT: {user.username}
+            <div className={`text-xs font-bold uppercase mb-10 ${gameState.score >= 7 ? 'text-success' : 'text-secondary'}`}>
+                {gameState.score >= 7 ? 'RANK: MASTER DETECTOR' : 'RANK: JUNIOR ANALYST'}
             </div>
-
-            <div className="text-left bg-black/40 rounded-xl p-6 border border-gray-800">
-                <h3 className="text-white font-bold text-xs mb-4 flex items-center gap-2 uppercase">
-                    <BookOpen size={14} className="text-primary" /> Bài học:
-                </h3>
-                {gameState.wrong_topics.length > 0 ? (
-                    <div className="space-y-3">
-                        {Array.from(new Set(gameState.wrong_topics)).map((topic, i) => (
-                            <div key={i} className="bg-white/5 p-3 rounded-lg border-l-2 border-secondary text-[11px] text-gray-400">
-                                <span className="text-secondary font-bold uppercase">{topic}</span>: Cần quan sát kỹ hơn.
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="text-success text-sm font-bold text-center">Tuyệt vời! Bạn không sai câu nào.</p>
-                )}
-            </div>
-        </div>
-
-        <div className="flex gap-4 w-full">
-            <button onClick={startNewGame} className="flex-1 bg-primary text-black p-4 rounded-xl font-bold text-xs transition-all uppercase">
-                THỬ LẠI
-            </button>
-            <button onClick={handleLogout} className="flex-1 bg-gray-900 text-gray-400 p-4 rounded-xl font-bold text-xs transition-all border border-gray-800 uppercase">
-                ĐỔI TÊN
-            </button>
+            <button onClick={startNewGame} className="w-full bg-white text-black py-5 rounded-2xl font-black text-xs transition-all uppercase hover:bg-primary shadow-xl">BẮT ĐẦU CHIẾN DỊCH MỚI</button>
         </div>
       </div>
     );
   }
 
-  if (!gameState) return <div className="text-primary text-center mt-40 font-mono tracking-widest animate-pulse">BOOTING...</div>;
+  if (!gameState) return <div className="text-primary text-center mt-40 font-mono tracking-widest animate-pulse">CONNECTING TO YOUTUBE FEED...</div>;
 
-  const lvl = gameState.levels[gameState.current];
+  const lvl = gameState.levels[gameState.current] as any;
   const progress = ((gameState.current) / gameState.levels.length) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto py-6">
-      <div className="flex justify-between items-end mb-4 px-2">
-          <div>
-              <span className="text-[9px] text-gray-500 uppercase tracking-widest block font-mono">Mission</span>
-              <h3 className="text-white text-2xl font-black italic uppercase">{lvl.title}</h3>
+    <div className="max-w-6xl mx-auto py-4 px-4">
+      {/* Header Info */}
+      <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
+          <div className="w-full">
+              <div className="flex items-center gap-2 mb-2">
+                 <Zap size={14} className="text-primary animate-pulse" />
+                 <span className="text-[10px] text-primary uppercase tracking-[0.3em] font-black">Neural Scanner Active</span>
+              </div>
+              <h3 className="text-white text-4xl font-black italic uppercase tracking-tighter leading-none">{lvl.title}</h3>
           </div>
-          <div className="text-right">
-              <span className="text-primary font-mono font-bold text-lg">{gameState.current + 1}<span className="text-gray-700">/10</span></span>
+          <div className="flex items-center gap-4 shrink-0">
+               <div className="text-right">
+                  <div className="text-[9px] text-gray-500 font-mono uppercase">Progress</div>
+                  <div className="text-primary font-mono font-bold text-2xl leading-none">{gameState.current + 1}<span className="text-gray-800">/10</span></div>
+               </div>
           </div>
       </div>
 
-      <div className="h-1.5 bg-gray-900 rounded-full overflow-hidden mb-8 mx-2">
-            <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+      <div className="h-1 bg-gray-900 rounded-full overflow-hidden mb-10">
+            <div className="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_#00F0FF]" style={{ width: `${progress}%` }}></div>
       </div>
 
-      <div className="space-y-6 px-2">
-             <div className="relative bg-black border-2 border-gray-800 rounded-2xl overflow-hidden aspect-video shadow-xl">
-                <iframe 
-                    src={getEmbedUrl(lvl.video_url)} 
-                    className="w-full h-full" 
-                    title="Challenge Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
-                
-                <div className="absolute top-4 left-4 bg-black/80 backdrop-blur px-4 py-1.5 rounded-lg text-[10px] font-bold border border-primary/20 text-primary uppercase">
-                    BÊN TRÁI
-                </div>
-                <div className="absolute top-4 right-4 bg-black/80 backdrop-blur px-4 py-1.5 rounded-lg text-[10px] font-bold border border-secondary/20 text-secondary uppercase">
-                    BÊN PHẢI
-                </div>
-             </div>
-             
-             {!gameState.show_result ? (
-                 <div className="grid grid-cols-2 gap-4">
-                     <button onClick={() => handleChoice(1)} className="py-6 border border-gray-800 bg-surface/50 text-white font-bold rounded-xl hover:border-primary hover:text-primary transition-all uppercase text-sm">
-                        Bên <span className="underline">Trái</span> là Deepfake
-                     </button>
-                     <button onClick={() => handleChoice(2)} className="py-6 border border-gray-800 bg-surface/50 text-white font-bold rounded-xl hover:border-secondary hover:text-secondary transition-all uppercase text-sm">
-                        Bên <span className="underline">Phải</span> là Deepfake
-                     </button>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+             {/* Left Column: Video & Actions */}
+             <div className="lg:col-span-8 space-y-6">
+                 <div className="relative bg-black border border-white/10 rounded-3xl overflow-hidden aspect-video shadow-2xl group">
+                    <iframe 
+                        src={getEmbedUrl(lvl.video_url)} 
+                        className="w-full h-full" 
+                        title="Challenge Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                    
+                    {/* Visual Overlay Indicators */}
+                    <div className="absolute top-6 left-6 pointer-events-none">
+                        <div className="bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-lg border border-primary/30 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <Search size={12} /> A-SIDE CHANNEL
+                        </div>
+                    </div>
+                    <div className="absolute top-6 right-6 pointer-events-none">
+                        <div className="bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-lg border border-secondary/30 text-secondary text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <Search size={12} /> B-SIDE CHANNEL
+                        </div>
+                    </div>
+
+                    {gameState.show_result && (
+                         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-center justify-center">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-primary animate-[scan_3s_linear_infinite] shadow-[0_0_20px_#00F0FF] opacity-30"></div>
+                         </div>
+                    )}
                  </div>
-             ) : (
-                <div className="bg-surface border-2 p-6 rounded-2xl flex items-center gap-6" style={{ borderColor: gameState.last_correct ? '#05FF00' : '#FF2A6D' }}>
-                    <div className="shrink-0">
-                        {gameState.last_correct ? <CheckCircle2 className="text-success" size={40} /> : <XCircle className="text-secondary" size={40} />}
+                 
+                 {!gameState.show_result ? (
+                     <div className="grid grid-cols-2 gap-4">
+                         <button onClick={() => handleChoice(1)} className="group relative py-6 border border-white/10 bg-surface/40 text-white font-black rounded-2xl hover:border-primary hover:text-primary transition-all uppercase text-xs overflow-hidden">
+                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            TRÁI LÀ DEEPFAKE
+                         </button>
+                         <button onClick={() => handleChoice(2)} className="group relative py-6 border border-white/10 bg-surface/40 text-white font-black rounded-2xl hover:border-secondary hover:text-secondary transition-all uppercase text-xs overflow-hidden">
+                            <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            PHẢI LÀ DEEPFAKE
+                         </button>
+                     </div>
+                 ) : (
+                    <div className="animate-in slide-in-from-bottom-6 duration-500">
+                        <div className={`p-8 rounded-3xl border-2 flex flex-col sm:flex-row items-center gap-8 ${gameState.last_correct ? 'bg-success/5 border-success/30' : 'bg-secondary/5 border-secondary/30'}`}>
+                            <div className="shrink-0">
+                                {gameState.last_correct ? <CheckCircle2 className="text-success" size={64} /> : <XCircle className="text-secondary" size={64} />}
+                            </div>
+                            <div className="flex-1 text-center sm:text-left">
+                                <h4 className={`text-2xl font-black mb-2 uppercase italic ${gameState.last_correct ? 'text-success' : 'text-secondary'}`}>
+                                    {gameState.last_correct ? "XÁC THỰC THÀNH CÔNG" : "PHÂN TÍCH SAI LỆCH"}
+                                </h4>
+                                <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+                                    {gameState.last_correct 
+                                        ? "Bạn đã phát hiện chính xác những điểm bất thường trong luồng dữ liệu AI." 
+                                        : "Mắt của bạn đã bị đánh lừa bởi thuật toán làm mịn. Hãy xem bảng phân tích bên cạnh."}
+                                </p>
+                            </div>
+                            <button onClick={nextLevel} className="shrink-0 bg-white text-black px-10 py-4 rounded-xl font-black hover:bg-primary transition-all text-xs uppercase shadow-xl hover:scale-105 active:scale-95">TIẾP THEO</button>
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <h3 className={`text-lg font-bold mb-1 uppercase ${gameState.last_correct ? 'text-success' : 'text-secondary'}`}>
-                            {gameState.last_correct ? "XÁC THỰC THÀNH CÔNG" : "THẤT BẠI"}
-                        </h3>
-                        <p className="text-gray-400 text-[11px] leading-relaxed italic">
-                            {lvl.advice}
-                        </p>
+                 )}
+             </div>
+
+             {/* Right Column: Forensic Comparison Console */}
+             <div className="lg:col-span-4 flex flex-col gap-6 h-full">
+                 <div className="bg-surface border border-white/5 rounded-3xl p-6 flex-1 flex flex-col relative overflow-hidden group">
+                     {/* Console Header */}
+                     <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+                        <div className="flex items-center gap-2">
+                            <BrainCircuit className="text-primary" size={20} />
+                            <span className="text-xs font-black text-white uppercase tracking-widest italic">Neural Forensic Reports</span>
+                        </div>
+                        <div className="text-[8px] font-mono text-gray-500 animate-pulse">STATUS: {isAnalyzing ? 'SCANNING...' : 'COMPLETED'}</div>
+                     </div>
+
+                     {/* Main Report Body */}
+                     <div className="flex-1 font-mono text-[11px] space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+                        {isAnalyzing ? (
+                            <div className="flex flex-col items-center justify-center h-full gap-4 py-20 opacity-40">
+                                <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                <div className="animate-pulse">DECODING VIDEO STREAM...</div>
+                            </div>
+                        ) : aiAnalysis ? (
+                            <div className="animate-in fade-in duration-700">
+                                {/* Error Table Comparison */}
+                                <div className="bg-black/60 border border-white/5 rounded-xl p-4 mb-6">
+                                    <div className="grid grid-cols-2 gap-4 text-[9px] uppercase font-black tracking-widest mb-4">
+                                        <div className="text-success border-b border-success/20 pb-1">Human Baseline</div>
+                                        <div className="text-secondary border-b border-secondary/20 pb-1">AI Artifacts</div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        {lvl.technical_flaws?.map((flaw: any, i: number) => (
+                                            <div key={i} className="border-b border-white/5 pb-3 last:border-0">
+                                                <div className="text-gray-500 text-[8px] mb-1 uppercase tracking-tighter">{flaw.feature}</div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="text-gray-300 leading-tight pr-2 border-r border-white/5">{flaw.real_behavior}</div>
+                                                    <div className="text-secondary/80 leading-tight italic">{flaw.ai_error}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Dynamic AI Analysis */}
+                                <div className="text-gray-400 whitespace-pre-wrap leading-relaxed border-l-2 border-primary/30 pl-4 py-2 bg-primary/5 rounded-r-lg">
+                                    {aiAnalysis}
+                                </div>
+                                
+                                {lvl.timestamp_glitch && (
+                                    <div className="mt-6 flex items-center gap-2 bg-secondary/10 p-3 rounded-lg border border-secondary/20">
+                                        <Info size={14} className="text-secondary" />
+                                        <span className="text-[10px] text-secondary font-black uppercase">Vùng lỗi xác định: {lvl.timestamp_glitch}</span>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full gap-4 py-20 opacity-20 text-center">
+                                <ShieldCheck size={48} />
+                                <p className="uppercase text-[10px] tracking-widest font-black max-w-[150px]">Vui lòng chọn video để bắt đầu phân tích kỹ thuật</p>
+                            </div>
+                        )}
+                     </div>
+                 </div>
+
+                 <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4">
+                    <div className="text-[9px] text-gray-500 font-mono mb-2 uppercase tracking-widest">Global Defense Intel</div>
+                    <div className="text-[11px] text-primary leading-tight font-medium italic">
+                        "Lưu ý: Deepfake thế hệ mới có thể xóa bỏ hoàn toàn nếp nhăn vi mô. Luôn yêu cầu đối phương 'ngoáy tai' hoặc 'quay mặt 90 độ' để phá vỡ cấu trúc AI."
                     </div>
-                    <button onClick={nextLevel} className="bg-white text-black px-6 py-3 rounded-lg font-bold hover:bg-primary transition-all flex items-center gap-2 text-[10px] uppercase shadow-lg">
-                        TIẾP THEO
-                    </button>
-                </div>
-             )}
+                 </div>
+             </div>
       </div>
     </div>
   );

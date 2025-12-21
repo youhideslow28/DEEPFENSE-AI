@@ -1,97 +1,76 @@
 
 import { LevelData, ChecklistItem, NewsItem, FunFact, PersonalityQuestion } from './types';
 
-export const LEVELS: LevelData[] = [
+// Mở rộng interface nội bộ cho mục đích so sánh
+export interface EnhancedLevelData extends LevelData {
+  technical_flaws: {
+    feature: string;
+    real_behavior: string;
+    ai_error: string;
+  }[];
+  timestamp_glitch: string;
+}
+
+export const LEVELS: EnhancedLevelData[] = [
   { 
-    title: "PHÂN TÍCH NHÂN VẬT A", 
-    desc: "Quan sát kỹ cử động cơ mặt và ánh sáng vùng mắt.", 
-    hint: "Tìm điểm bất thường ở vùng tiếp giáp giữa mặt và tóc.",
+    title: "SỰ BIẾN DẠNG CỦA LỚP ĐÈ (OCCLUSION)", 
+    desc: "Phân tích khi có vật thể che ngang khuôn mặt.", 
+    hint: "AI thường bị 'nháy' hình khi bàn tay hoặc ly nước đè lên các điểm ảnh mặt.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là Deepfake. Bạn có thể thấy vùng viền mặt bị nhòe nhẹ khi nhân vật quay đầu nhanh, đây là lỗi phổ biến của thuật toán thế hệ cũ.",
-    video_url: "https://youtu.be/UOaKSgHVARM"
+    advice: "Video bên TRÁI gặp lỗi xử lý phân tầng. Khi tay đưa lên, thuật toán không kịp render các pixel bên dưới, gây ra hiện tượng 'tan chảy' viền tay.",
+    video_url: "https://youtu.be/UOaKSgHVARM",
+    timestamp_glitch: "0:08 - 0:12",
+    technical_flaws: [
+      { feature: "Cạnh biên (Edges)", real_behavior: "Sắc nét, tách biệt hoàn toàn với vật thể đè lên.", ai_error: "Bị nhòe (motion blur) và dính vào vật thể." },
+      { feature: "Kết cấu da", real_behavior: "Giữ nguyên chi tiết lỗ chân lông khi bị che.", ai_error: "Bị biến dạng cấu trúc hoặc mất chi tiết đột ngột." }
+    ]
   },
   { 
-    title: "ĐỐI CHIẾU KHẨU HÌNH", 
-    desc: "Tập trung vào sự đồng bộ giữa âm thanh và chuyển động môi.", 
-    hint: "Chú ý các phụ âm cần mím môi như P, B, M.",
+    title: "ĐỒNG BỘ QUANG PHỔ MÔI (LIP-SYNC)", 
+    desc: "Kiểm tra độ trễ giữa âm thanh và chuyển động cơ miệng.", 
+    hint: "Các âm khó như 'M, P, B' yêu cầu nén môi vật lý mà AI hay làm thiếu.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là Deepfake. Khẩu hình miệng thường bị trễ khoảng vài mil giây so với âm thanh thật, tạo cảm giác thiếu tự nhiên.",
-    video_url: "https://youtu.be/OO8p3jN7TBQ"
+    advice: "Video bên PHẢI có độ trễ 12ms trong khẩu hình. AI tạo ra các hình dáng môi 'trung bình' thay vì các cử động bật hơi dứt khoát.",
+    video_url: "https://youtu.be/OO8p3jN7TBQ",
+    timestamp_glitch: "Toàn thời gian",
+    technical_flaws: [
+      { feature: "Khớp âm (Phonemes)", real_behavior: "Cơ môi co thắt mạnh cho các phụ âm bậc.", ai_error: "Chuyển động lướt, thiếu lực nén cơ học." },
+      { feature: "Răng & Lưỡi", real_behavior: "Nhìn rõ từng chi tiết khi mở miệng.", ai_error: "Thường bị mờ thành một khối trắng đục." }
+    ]
   },
   { 
-    title: "KIỂM TRA CẤU TRÚC RĂNG", 
-    desc: "Nhìn vào khoang miệng khi nhân vật nói các từ có âm mở.", 
-    hint: "Răng thật có kẽ hở rõ ràng, AI thường làm mờ chúng thành một khối.",
+    title: "ÁNH SÁNG VÀ PHẢN CHIẾU ĐỒNG TỬ", 
+    desc: "Soi điểm sáng trong mắt nhân vật.", 
+    hint: "Mắt thật luôn có điểm phản chiếu ánh sáng (catchlight) đồng nhất giữa hai bên.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI lộ lỗi render nguồn sáng. Điểm sáng trong mắt trái và phải không cùng vị trí, chứng tỏ mặt được ghép từ nhiều nguồn ảnh khác nhau.",
+    video_url: "https://youtu.be/-wenF_aW-gM",
+    timestamp_glitch: "Cận cảnh (Close-up)",
+    technical_flaws: [
+      { feature: "Catchlight", real_behavior: "Hình dáng và vị trí điểm sáng khớp với nguồn sáng phòng.", ai_error: "Hình dáng điểm sáng bị lệch hoặc có hình dạng kỳ lạ (hình vuông)." },
+      { feature: "Mạch máu mắt", real_behavior: "Có các vi mạch nhỏ li ti tự nhiên.", ai_error: "Lòng trắng quá sạch hoặc có độ mịn nhân tạo." }
+    ]
+  },
+  { 
+    title: "VI BIỂU CẢM VÙNG MẮT (MICRO-EXPRESSIONS)", 
+    desc: "Để ý các nếp nhăn nhỏ khi nhân vật cười hoặc nói.", 
+    hint: "Cảm xúc thật luôn đi kèm với sự co thắt của các cơ quanh mắt (Orbicularis oculi).",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là Deepfake. AI đời cũ gặp khó khăn trong việc vẽ từng chiếc răng riêng lẻ, thường tạo ra một 'mảng trắng' duy nhất.",
-    video_url: "https://youtu.be/hglX1Q93en8"
-  },
-  { 
-    title: "PHÂN TÍCH NGUỒN SÁNG", 
-    desc: "Xác định hướng ánh sáng đổ trên khuôn mặt.", 
-    hint: "Bóng của mũi phải khớp với hướng sáng của môi trường.",
-    fake_pos: 2, 
-    advice: "Video bên PHẢI là Deepfake. Ánh sáng trên khuôn mặt nhân vật không đồng nhất với phông nền, cho thấy khuôn mặt được ghép vào sau.",
-    video_url: "https://youtu.be/-wenF_aW-gM"
-  },
-  { 
-    title: "BIỂU CẢM VI MÔ", 
-    desc: "Quan sát các nếp nhăn nhỏ quanh mắt khi cười.", 
-    hint: "Cảm xúc thật luôn đi kèm với các chuyển động cơ nhỏ nhất.",
-    fake_pos: 1, 
-    advice: "Video bên TRÁI là Deepfake. Nhân vật có biểu cảm 'đơ' ở vùng mắt dù miệng đang cười lớn, dấu hiệu điển hình của việc thiếu dữ liệu cảm xúc.",
-    video_url: "https://youtu.be/pP3-hpkg6Ps"
-  },
-  { 
-    title: "ĐỘ MỊN CỦA DA", 
-    desc: "Đánh giá chi tiết bề mặt da và lỗ chân lông.", 
-    hint: "Da quá hoàn hảo, không có khuyết điểm thường là sản phẩm của AI.",
-    fake_pos: 2, 
-    advice: "Video bên PHẢI là Deepfake. AI thường 'làm mịn' da quá mức để che giấu các lỗi ghép nối, khiến da trông như nhựa hoặc sáp.",
-    video_url: "https://youtu.be/J52kFGgVMpc"
-  },
-  { 
-    title: "VẬT THỂ TRONG SUỐT", 
-    desc: "Quan sát kính mắt hoặc các vật thể xuyên thấu nếu có.", 
-    hint: "Tìm kiếm sự biến dạng của hình ảnh qua lớp kính.",
-    fake_pos: 1, 
-    advice: "Video bên TRÁI là Deepfake. Sự phản chiếu trên tròng kính không khớp với chuyển động của nhân vật, cho thấy lỗi xử lý layer.",
-    video_url: "https://youtu.be/jLXuTEAd0eY"
-  },
-  { 
-    title: "KẾT CẤU TÓC TƠ", 
-    desc: "Nhìn vào phần tóc mái và các sợi tóc mảnh.", 
-    hint: "Sợi tóc thật phải tách bạch và chuyển động tự nhiên.",
-    fake_pos: 2, 
-    advice: "Video bên PHẢI là Deepfake. Phần tóc ở viền mặt trông như một mảng màu đặc, không có độ tơi của sợi tóc thật.",
-    video_url: "https://youtu.be/7T0pGbJJcnE"
-  },
-  { 
-    title: "ẢNH HƯỞNG HẬU CẢNH", 
-    desc: "Để ý phần phông nền ngay sát cạnh khuôn mặt.", 
-    hint: "Nền bị méo khi nhân vật di chuyển là dấu hiệu ghép mặt.",
-    fake_pos: 1, 
-    advice: "Video bên TRÁI là Deepfake. Bạn có thể thấy các đường thẳng ở hậu cảnh bị cong nhẹ mỗi khi nhân vật nghiêng đầu.",
-    video_url: "https://youtu.be/AQ8VkGH9hk0"
-  },
-  { 
-    title: "XÁC THỰC TỔNG THỂ", 
-    desc: "Kết hợp mọi kỹ năng đã học để đánh giá video cuối cùng.", 
-    hint: "Tin vào trực giác của bạn nếu cảm thấy 'thung lũng kỳ lạ' (Uncanny Valley).",
-    fake_pos: 2, 
-    advice: "Video bên PHẢI là Deepfake. Tổng thể chuyển động quá trơn tru nhưng thiếu đi nhịp thở và các cử động vô thức của con người.",
-    video_url: "https://youtu.be/8Kmnc2jGE74"
-  },
+    advice: "Video bên TRÁI là 'mặt nạ AI'. Miệng cười nhưng vùng mắt hoàn toàn bất động, không có nếp nhăn chân chim xuất hiện.",
+    video_url: "https://youtu.be/J52kFGgVMpc",
+    technical_flaws: [
+      { feature: "Nếp nhăn động", real_behavior: "Xuất hiện và biến mất theo nhịp biểu cảm.", ai_error: "Vùng trán và quanh mắt quá mịn, không thay đổi theo nụ cười." },
+      { feature: "Nhịp nháy mắt", real_behavior: "Tự nhiên, không đều đặn (vô thức).", ai_error: "Quá đều hoặc quá lâu không nháy mắt." }
+    ],
+    timestamp_glitch: "0:15 - 0:22"
+  }
 ];
 
 export const PERSONALITY_QUESTIONS: PersonalityQuestion[] = [
     { id: "q1", text: "Tôi cảm thấy tự tin hơn khi phân biệt thật giả.", trait: "CONFIDENCE" },
     { id: "q2", text: "Tôi vẫn cảm thấy lo lắng vì AI quá giống thật.", trait: "ANXIETY" },
     { id: "q3", text: "Tôi sẽ luôn kiểm chứng lại các cuộc gọi video.", trait: "SKEPTICISM" },
-    { id: "q4", text: "Tôi đã nhận biết được các lỗi hình ảnh cơ bản.", trait: "AWARENESS" },
-    { id: "q5", text: "Tôi cảm thấy sốc trước sự tinh vi của công nghệ Deepfake.", trait: "ANXIETY" }, 
-    { id: "q6", text: "Tôi cảm thấy an tâm hơn khi biết cách phòng vệ.", trait: "CONFIDENCE" }, 
-    { id: "q7", text: "Tôi sẵn sàng chia sẻ kiến thức này cho người thân.", trait: "AWARENESS" } 
+    { id: "q4", text: "Tôi đã nhận biết được các lỗi hình ảnh cơ bản.", trait: "AWARENESS" }
 ];
 
 export const CHECKLIST_DATA: ChecklistItem[] = [
@@ -128,21 +107,6 @@ export const NEWS_DATA: NewsItem[] = [
     tag: "QUỐC TẾ", title: "CEO giả tham gia cuộc họp lừa 25 triệu USD", date: "09/2025", loss: "25 Triệu USD", 
     desc: "Vụ lừa kỷ lục tại Hong Kong khi cả phòng họp đều là Deepfake.",
     url: "https://cnn.com"
-  },
-  { 
-    tag: "CẢNH BÁO", title: "Deepfake mượn tiền 'lướt sóng' chứng khoán", date: "12/2025", loss: "Hàng Tỷ VNĐ", 
-    desc: "Hack Facebook tạo video 5 giây rồi tắt với lý do 'mạng lag' để mượn tiền.",
-    url: "https://baochinhphu.vn"
-  },
-  { 
-    tag: "LỪA TÌNH", title: "Lừa đảo tình cảm bằng công nghệ Face Swap", date: "08/2025", loss: "1.2 Tỷ VNĐ", 
-    desc: "Ghép mặt người mẫu vào video call dụ dỗ đầu tư tiền ảo.",
-    url: "https://cand.com.vn"
-  },
-  {
-    tag: "CẬP NHẬT", title: "Giả danh nhân viên ngân hàng hỗ trợ khóa thẻ", date: "01/2025", loss: "890 Triệu VNĐ",
-    desc: "Yêu cầu quét mã QR để bảo mật nhưng thực chất là chiếm đoạt OTP.",
-    url: "https://baotintuc.vn"
   }
 ];
 
