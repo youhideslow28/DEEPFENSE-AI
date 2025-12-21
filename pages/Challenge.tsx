@@ -5,6 +5,8 @@ import { GameState } from '../types';
 import { CheckCircle2, XCircle, BrainCircuit, Zap, ShieldCheck, HelpCircle, ArrowRight, BookOpen, Search, RotateCcw } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
+declare var process: any;
+
 const Challenge: React.FC = () => {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [surveyStep, setSurveyStep] = useState<number | null>(0);

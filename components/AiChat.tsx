@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, ScanLine } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
+declare var process: any;
+
 const AiChat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'model', text: string}[]>([

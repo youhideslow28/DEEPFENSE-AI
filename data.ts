@@ -17,7 +17,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Soi kỹ bàn tay và các chi tiết khuôn mặt của nhân vật.", 
     hint: "AI thường 'sáng tạo' thêm ngón tay hoặc làm mờ các chi tiết khớp nối nhỏ.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Biological Inconsistency': Bàn tay nhân vật có cấu trúc ngón không rõ ràng, các khối Lego bị hòa lẫn vào da người thay vì tách biệt hoàn toàn.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Biological Inconsistency': Ngón tay dính nhau, bàn tay thiếu cấu trúc xương thực tế và khuôn mặt có hiện tượng biến dạng nhẹ (warping) khi nhân vật quay đầu.",
     video_url: "https://youtu.be/-wenF_aW-gM",
     technical_flaws: [
       { feature: "Cấu trúc bàn tay", real_behavior: "5 ngón rõ ràng, khớp nối tự nhiên.", ai_error: "Ngón tay dính nhau hoặc biến dạng khi quay mặt." }
@@ -25,15 +25,15 @@ export const LEVELS: EnhancedLevelData[] = [
   },
   { 
     id: "v2",
-    title: "TAY VÀ CÂY (HANDS/TREES)", 
+    title: "BÀN TAY DƯỚI TÁN CÂY (HANDS/TREES)", 
     difficulty: "Dễ",
     desc: "Đánh giá chất liệu da và cấu trúc nhành cây.", 
-    hint: "Da AI thường có độ bóng như sáp (waxy) và thiếu các nếp gấp vi mô.",
+    hint: "Da AI thường có độ bóng như sáp (waxy) và thiếu nếp gấp vi mô.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Subsurface Scattering': Ánh sáng xuyên qua da trông không thực tế, tạo cảm giác da như làm bằng nhựa sáp. Các nhành cây phía sau bị biến dạng khi tay lướt qua.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Surface Texture': Da tay trông mịn màng quá mức như sáp (waxy appearance), thiếu độ trong mờ tự nhiên và các nếp nhăn nhỏ ở khớp ngón tay.",
     video_url: "https://youtu.be/7T0pGbJJcnE",
     technical_flaws: [
-      { feature: "Kết cấu biểu bì", real_behavior: "Có lỗ chân lông, nếp nhăn và độ trong mờ tự nhiên.", ai_error: "Mịn màng quá mức như sáp, thiếu chi tiết vi mô." }
+      { feature: "Kết cấu biểu bì", real_behavior: "Có lỗ chân lông, nếp nhăn và độ trong mờ tự nhiên.", ai_error: "Mịn màng như sáp, thiếu chi tiết vi mô." }
     ]
   },
   { 
@@ -43,7 +43,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Phân tích bước chân và sự tương tác với mặt đất.", 
     hint: "Để ý hiện tượng 'trượt chân' (skating) khi con vật di chuyển.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là AI. Lỗi 'Temporal Consistency': Chân hươu cao cổ có hiện tượng trượt trên mặt đất thay vì bám trụ chắc chắn. Viền thân cũng bị 'lem' màu vào phông nền phía sau.",
+    advice: "Video bên TRÁI là AI. Lỗi 'Temporal Consistency': Chân hươu cao cổ có hiện tượng trượt trên cỏ (skating effect) và đường viền tách nền (masking) bị lộ liễu, không hòa hợp với môi trường.",
     video_url: "https://youtu.be/J52kFGgVMpc",
     technical_flaws: [
       { feature: "Tiếp xúc bề mặt", real_behavior: "Bàn chân cố định tại một điểm khi chạm đất.", ai_error: "Chân trượt trên cỏ, tách nền lộ liễu." }
@@ -54,9 +54,9 @@ export const LEVELS: EnhancedLevelData[] = [
     title: "CHUỒN CHUỒN (DRAGONFLY)", 
     difficulty: "Trung bình",
     desc: "Nhìn kỹ vào gân cánh và độ rung của đôi cánh.", 
-    hint: "Cánh chuồn chuồn thật có cấu trúc gân như mạng nhện, cực kỳ sắc nét.",
+    hint: "Cánh chuồn chuồn thật có cấu trúc gân sắc nét như mạng nhện.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Fine Detail Rendering': Cánh chuồn chuồn bị mờ đục (opaque) và thiếu hệ thống gân cánh phức tạp. AI dùng chuyển động mờ (motion blur) để che giấu việc không render được chi tiết cực nhỏ.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Fine Detail Rendering': Đôi cánh bị mờ (motion blur giả tạo) và thiếu hoàn toàn hệ thống gân cánh phức tạp vốn có của chuồn chuồn thật.",
     video_url: "https://youtu.be/pP3-hpkg6Ps",
     technical_flaws: [
       { feature: "Độ sắc nét chi tiết", real_behavior: "Gân cánh mạng nhện rõ rệt.", ai_error: "Cánh bị mờ, thiếu chi tiết gân cánh." }
@@ -69,7 +69,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Nhìn vào hình ảnh phản chiếu trên mặt nước.", 
     hint: "Phản chiếu phải là hình ảnh đối xứng hoàn hảo qua trục mặt nước.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là AI. Lỗi 'Reflection Logic': Hình ảnh phản chiếu dưới nước của con thiên nga không khớp với cử động thực tế phía trên. AI thường render phông nền và phản chiếu độc lập dẫn đến sai lệch vật lý.",
+    advice: "Video bên TRÁI là AI. Lỗi 'Reflection Logic': Hình ảnh phản chiếu dưới nước hoàn toàn không khớp với cử động phía trên. Sóng nước cũng di chuyển theo cách phi vật lý (không lan tỏa theo trọng tâm).",
     video_url: "https://youtu.be/jLXuTEAd0eY",
     technical_flaws: [
       { feature: "Logic phản chiếu", real_behavior: "Đối xứng hoàn hảo qua mặt nước.", ai_error: "Phản chiếu không khớp, sóng nước phi vật lý." }
@@ -82,7 +82,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Phân tích dòng chảy của nước đổ xuống.", 
     hint: "Nước rơi có trọng lực, không lơ lửng như khói.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Motion Loop': Dòng nước trông giống như làn khói đang bay hơn là nước rơi có trọng lượng. AI cũng tạo ra một vòng lặp (loop) lộ liễu khiến dòng chảy trông rất máy móc.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Material Simulation': Dòng nước trông nhẹ như khói, thiếu khối lượng vật lý. Chuyển động của nước bị lặp lại (looping artifacts) một cách máy móc.",
     video_url: "https://youtu.be/8Kmnc2jGE74",
     technical_flaws: [
       { feature: "Vật lý dòng chảy", real_behavior: "Nước rơi có trọng lượng, tạo bọt trắng.", ai_error: "Dòng nước giống khói, chuyển động lặp lại loop." }
@@ -93,9 +93,9 @@ export const LEVELS: EnhancedLevelData[] = [
     title: "HOÀNG HÔN (SUNSET)", 
     difficulty: "Khó",
     desc: "Quan sát sự biến đổi của các đám mây.", 
-    hint: "Mây thật di chuyển theo khối, không tự nhiên sinh ra hoặc mất đi giữa chừng.",
+    hint: "Mây thật di chuyển theo khối đồng nhất.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Latent Space Morphing': Các đám mây nhỏ có hiện tượng tự biến hình (morphing) thành hình dạng khác hoặc biến mất rồi xuất hiện lại một cách vô lý.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Latent Space Morphing': Các đám mây có hiện tượng bị biến hình hoặc 'tan chảy' ngay tại chỗ thay vì trôi tịnh tiến theo hướng gió như tự nhiên.",
     video_url: "https://youtu.be/AQ8VkGH9hk0",
     technical_flaws: [
       { feature: "Tính nhất quán của mây", real_behavior: "Di chuyển tịnh tiến tự nhiên.", ai_error: "Mây bị biến hình/tan chảy tại chỗ thay vì trôi." }
@@ -108,7 +108,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Phân tích hình dạng lỗ rỗng sau khi thìa xúc cát lên.", 
     hint: "Cát thật giữ nguyên hình dạng lòng thìa sắc nét.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là AI. Lỗi 'Geometric Stability': Hình dạng của cái lỗ bị biến đổi liên tục (morphing) thay vì giữ nguyên hình khối ổn định như vật lý thực tế.",
+    advice: "Video bên TRÁI là AI. Lỗi 'Geometric Stability': Hình dạng của cái lỗ bị biến đổi liên tục (morphing) thay vì giữ nguyên hình khối ổn định sau khi bị tác động.",
     video_url: "https://youtu.be/OO8p3jN7TBQ",
     technical_flaws: [
       { feature: "Ổn định hình học", real_behavior: "Lỗ rỗng giữ nguyên hình dạng lòng thìa.", ai_error: "Viền lỗ bị biến dạng liên tục sau khi xúc." }
@@ -121,7 +121,7 @@ export const LEVELS: EnhancedLevelData[] = [
     desc: "Cảm nhận độ giòn và kết cấu của vật liệu khi bị cắt.", 
     hint: "Cát nén khi cắt phải vỡ vụn thành các hạt nhỏ.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI là AI. Lỗi 'Material Texture': Kết cấu vật liệu trông giống cao su hoặc nhựa dẻo hơn là cát nén hạt nhỏ.",
+    advice: "Video bên PHẢI là AI. Lỗi 'Material Consistency': Kết cấu vật liệu trông giống cao su hoặc nhựa dẻo hơn là cát nén nứt vỡ thành hạt li ti.",
     video_url: "https://youtu.be/hglX1Q93en8",
     technical_flaws: [
       { feature: "Kết cấu vật liệu", real_behavior: "Cát vỡ vụn sắc nét thành hạt li ti.", ai_error: "Trông dẻo như đất sét hoặc cao su." }
@@ -131,10 +131,10 @@ export const LEVELS: EnhancedLevelData[] = [
     id: "v10",
     title: "MÁY ÉP THỦY LỰC (HYDRAULIC PRESS)", 
     difficulty: "Dễ",
-    desc: "Phân tích cách chất lỏng phản ứng dưới áp suất.", 
-    hint: "Nước thật khi bắn ra phải có độ hỗn loạn (chaos).",
+    desc: "Phân tích cách chất lỏng phản ứng dưới áp suất cực lớn.", 
+    hint: "Nước thật khi bắn ra phải có độ hỗn loạn và bắn tia ngẫu nhiên.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI là AI. Lỗi 'Fluid Dynamics': Nước dừa loang ra như thạch dẻo, vỏ dừa biến dạng như nhựa thay vì vỡ giòn tự nhiên.",
+    advice: "Video bên TRÁI là AI. Lỗi 'Fluid Dynamics': Nước dừa loang ra quá mượt như thạch dẻo thay vì bắn tung tóe. Vỏ dừa cũng bị biến dạng dẻo (như nhựa) thay vì nứt vỡ giòn.",
     video_url: "https://youtu.be/UOaKSgHVARM",
     technical_flaws: [
       { feature: "Động lực học chất lỏng", real_behavior: "Nước bắn tung tóe tự nhiên.", ai_error: "Nước loang ra như thạch, vỏ dừa biến dạng dẻo." }
