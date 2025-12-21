@@ -43,21 +43,21 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setPage }) => {
             </div>
           </div>
 
-          {/* Nav */}
-          <nav className="flex flex-wrap justify-center gap-2 md:gap-4">
+          {/* Navigation Items */}
+          <nav className="flex flex-wrap justify-center gap-1 md:gap-4">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setPage(item.id)}
                 className={`
-                  relative flex items-center gap-2 px-4 py-2 rounded-lg text-[11px] font-black font-mono transition-all duration-500 uppercase tracking-widest
+                  relative flex items-center gap-2 px-3 py-2 rounded-lg text-[10px] font-black font-mono transition-all duration-500 uppercase tracking-widest
                   ${currentPage === item.id 
                     ? 'text-primary bg-primary/5 shadow-[0_0_20px_rgba(0,240,255,0.05)]' 
                     : 'text-gray-500 hover:text-white hover:bg-white/5'}
                 `}
               >
                 {item.icon}
-                {item.label}
+                <span className="hidden sm:inline">{item.label}</span>
                 {currentPage === item.id && (
                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-primary shadow-[0_0_10px_#00F0FF]"></span>
                 )}

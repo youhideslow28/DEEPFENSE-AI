@@ -9,14 +9,15 @@ const GAME_STATE_KEY = 'DEEPFENSE_GAME_STATE';
 
 const getEmbedUrl = (url: string) => {
     if (!url) return "";
+    // Xử lý các định dạng link youtube phổ biến (shorts, watch?, share, v.v.)
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
     const match = url.match(regExp);
     const videoId = (match && match[2].length === 11) ? match[2] : null;
 
     if (videoId) {
-      // Tự động lấy origin hiện tại (dù là github.io hay tên miền riêng)
-      const origin = typeof window !== 'undefined' ? window.location.origin : '';
-      return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&controls=1&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
+      // Thêm origin để tránh lỗi embedding 153/403
+      const origin = window.location.origin;
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&controls=1&origin=${encodeURIComponent(origin)}`;
     }
     return url;
 };
