@@ -2,6 +2,9 @@
 export type PageType = "HOME" | "TOOLS" | "CHALLENGE" | "AI_PROJECT" | "CONTACT";
 
 export interface LevelData {
+  // Fix: Adding id and difficulty which were missing but used in data.ts
+  id: string;
+  difficulty: string;
   title: string;
   desc: string;
   hint: string;

@@ -4,21 +4,11 @@ import { Brain, Activity, Zap, Shield, Target } from 'lucide-react';
 
 const AnalyticsChart: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'METRICS' | 'PSYCHOLOGY'>('METRICS');
-  const [rotation, setRotation] = useState(0);
-  const [pulse, setPulse] = useState(1);
-
-  // Sử dụng useMemo để cố định dữ liệu ngẫu nhiên, tránh re-render gây rung màn hình
+  
+  // Dữ liệu tĩnh không hiệu ứng rung
   const barHeights = useMemo(() => 
     [...Array(20)].map(() => Math.random() * 15 + 3), 
   []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRotation(prev => (prev + 0.8) % 360);
-      setPulse(1 + Math.sin(Date.now() / 600) * 0.03);
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
 
   const data = {
     defenseIndex: 8.4,
@@ -44,7 +34,7 @@ const AnalyticsChart: React.FC = () => {
       {/* Header */}
       <div className="relative z-10 bg-black/40 backdrop-blur-md border-b border-white/5 p-4 flex justify-between items-center shrink-0">
         <div className="flex items-center gap-2">
-          <Activity className="text-primary animate-pulse" size={16} />
+          <Activity className="text-primary" size={16} />
           <div className="flex flex-col">
             <span className="text-[9px] font-black text-white/80 tracking-widest uppercase leading-none">NEURAL_DIAGNOSTIC</span>
             <span className="text-[7px] text-primary/60 font-mono uppercase tracking-tighter mt-1">CORE_STABLE_V2.5</span>
@@ -66,11 +56,11 @@ const AnalyticsChart: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content Area - Fixed Height to prevent shaking */}
+      {/* Main Content Area */}
       <div className="flex-1 relative p-6 flex flex-col items-center justify-center overflow-hidden">
         {activeTab === 'METRICS' ? (
           <div className="w-full h-full flex flex-col animate-in zoom-in fade-in duration-300">
-            {/* Circular Progress Gauge */}
+            {/* Circular Progress Gauge - Static */}
             <div className="relative w-36 h-36 mx-auto flex items-center justify-center mb-6 shrink-0">
               <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="1" />
@@ -87,14 +77,11 @@ const AnalyticsChart: React.FC = () => {
                     </linearGradient>
                 </defs>
               </svg>
-              {/* Rotating Pointer Ring */}
-              <div 
-                className="absolute inset-0 border border-primary/10 rounded-full scale-90" 
-                style={{ transform: `scale(0.85) rotate(${rotation}deg)` }}
-              >
+              {/* Pointer Ring - Static */}
+              <div className="absolute inset-0 border border-primary/10 rounded-full scale-90 opacity-20">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_#00F0FF]"></div>
               </div>
-              <div className="text-center relative z-10" style={{ transform: `scale(${pulse})` }}>
+              <div className="text-center relative z-10">
                 <div className="text-[8px] font-black text-primary/60 tracking-widest mb-1 uppercase">DEF_IDX</div>
                 <div className="text-4xl font-black text-white italic tracking-tighter">{data.defenseIndex}</div>
               </div>
@@ -117,16 +104,12 @@ const AnalyticsChart: React.FC = () => {
                 <div className="absolute inset-0 flex items-center justify-center opacity-20">
                     <Brain size={100} className="text-primary" />
                 </div>
-                {/* Visualizer bars */}
                 <div className="flex items-end gap-1 h-12 w-full px-4 relative z-10">
                     {barHeights.map((h, i) => (
                         <div 
                             key={i} 
                             className="flex-1 bg-gradient-to-t from-primary/10 to-primary/60 rounded-t-sm" 
-                            style={{ 
-                                height: `${h + Math.sin(Date.now()/500 + i)*3}px`,
-                                transition: 'height 0.1s ease-out'
-                            }}
+                            style={{ height: `${h}px` }}
                         ></div>
                     ))}
                 </div>
@@ -160,8 +143,8 @@ const AnalyticsChart: React.FC = () => {
             <span className="flex items-center gap-1.5"><Target size={10} className="text-secondary" /> SCAN: 2.4GHz</span>
             <span className="flex items-center gap-1.5"><Shield size={10} className="text-success" /> AES_256</span>
         </div>
-        <div className="text-primary/80 animate-pulse uppercase font-black tracking-widest flex items-center gap-1">
-            <span className="w-1 h-1 bg-primary rounded-full"></span> LIVE_DATA
+        <div className="text-primary/80 uppercase font-black tracking-widest flex items-center gap-1">
+            <span className="w-1 h-1 bg-primary rounded-full"></span> SYSTEM_READY
         </div>
       </div>
     </div>

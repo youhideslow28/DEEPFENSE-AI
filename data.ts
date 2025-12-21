@@ -1,7 +1,6 @@
 
 import { LevelData, ChecklistItem, NewsItem, FunFact, PersonalityQuestion } from './types';
 
-// Mở rộng interface nội bộ cho mục đích so sánh
 export interface EnhancedLevelData extends LevelData {
   technical_flaws: {
     feature: string;
@@ -13,64 +12,167 @@ export interface EnhancedLevelData extends LevelData {
 
 export const LEVELS: EnhancedLevelData[] = [
   { 
-    title: "SỰ BIẾN DẠNG CỦA LỚP ĐÈ (OCCLUSION)", 
-    desc: "Phân tích khi có vật thể che ngang khuôn mặt.", 
-    hint: "AI thường bị 'nháy' hình khi bàn tay hoặc ly nước đè lên các điểm ảnh mặt.",
+    id: "v1",
+    title: "MÁY ÉP THỦY LỰC (HYDRAULIC PRESS)", 
+    difficulty: "Dễ",
+    desc: "Quan sát cách chất lỏng phản ứng dưới áp lực cực lớn.", 
+    hint: "Trọng lực và sự bắn tia của chất lỏng thật rất hỗn loạn, không mượt mà quá mức.",
     fake_pos: 1, 
-    advice: "Video bên TRÁI gặp lỗi xử lý phân tầng. Khi tay đưa lên, thuật toán không kịp render các pixel bên dưới, gây ra hiện tượng 'tan chảy' viền tay.",
+    advice: "Video bên TRÁI là AI. Lỗi 'Fluid Dynamics': Chất lỏng khi bị ép chảy ra theo quỹ đạo quá hoàn hảo, thiếu các tia bắn nhỏ (splashes) và áp suất không làm thay đổi mật độ bọt khí một cách tự nhiên như vật lý thực tế.",
     video_url: "https://youtu.be/UOaKSgHVARM",
-    timestamp_glitch: "0:08 - 0:12",
+    timestamp_glitch: "0:05 - 0:10",
     technical_flaws: [
-      { feature: "Cạnh biên (Edges)", real_behavior: "Sắc nét, tách biệt hoàn toàn với vật thể đè lên.", ai_error: "Bị nhòe (motion blur) và dính vào vật thể." },
-      { feature: "Kết cấu da", real_behavior: "Giữ nguyên chi tiết lỗ chân lông khi bị che.", ai_error: "Bị biến dạng cấu trúc hoặc mất chi tiết đột ngột." }
+      { feature: "Động lực học chất lỏng", real_behavior: "Bắn tia ngẫu nhiên, tạo bọt khí không đều.", ai_error: "Chảy tràn như gel, quỹ đạo quá mượt." }
     ]
   },
   { 
-    title: "ĐỒNG BỘ QUANG PHỔ MÔI (LIP-SYNC)", 
-    desc: "Kiểm tra độ trễ giữa âm thanh và chuyển động cơ miệng.", 
-    hint: "Các âm khó như 'M, P, B' yêu cầu nén môi vật lý mà AI hay làm thiếu.",
-    fake_pos: 2, 
-    advice: "Video bên PHẢI có độ trễ 12ms trong khẩu hình. AI tạo ra các hình dáng môi 'trung bình' thay vì các cử động bật hơi dứt khoát.",
+    id: "v2",
+    title: "XÚC CÁT ĐỘNG LỰC HỌC (KINETIC SAND)", 
+    difficulty: "Dễ",
+    desc: "Phân tích hình dạng lỗ thủng sau khi thìa xúc cát lên.", 
+    hint: "AI thường gặp khó khăn trong việc duy trì hình dạng hình học ổn định của các lỗ rỗng.",
+    fake_pos: 1, 
+    advice: "Video bên TRÁI là AI. Lỗi 'Geometric Stability': Hình dạng của cái lỗ để lại sau khi xúc cát bị biến đổi liên tục (morphing) thay vì giữ nguyên hình lòng thìa như video bên phải.",
     video_url: "https://youtu.be/OO8p3jN7TBQ",
     timestamp_glitch: "Toàn thời gian",
     technical_flaws: [
-      { feature: "Khớp âm (Phonemes)", real_behavior: "Cơ môi co thắt mạnh cho các phụ âm bậc.", ai_error: "Chuyển động lướt, thiếu lực nén cơ học." },
-      { feature: "Răng & Lưỡi", real_behavior: "Nhìn rõ từng chi tiết khi mở miệng.", ai_error: "Thường bị mờ thành một khối trắng đục." }
+      { feature: "Cấu trúc rỗng", real_behavior: "Giữ nguyên hình dạng lòng thìa sắc nét.", ai_error: "Viền lỗ bị co giãn hoặc mờ dần không tự nhiên." }
     ]
   },
   { 
-    title: "ÁNH SÁNG VÀ PHẢN CHIẾU ĐỒNG TỬ", 
-    desc: "Soi điểm sáng trong mắt nhân vật.", 
-    hint: "Mắt thật luôn có điểm phản chiếu ánh sáng (catchlight) đồng nhất giữa hai bên.",
+    id: "v3",
+    title: "CẮT CÁT (SAND CUT)", 
+    difficulty: "Dễ",
+    desc: "Cảm nhận độ giòn và kết cấu của vật liệu khi bị cắt.", 
+    hint: "Cát thật khi cắt sẽ vỡ vụn thành các hạt li ti, không dính lại như cao su.",
     fake_pos: 2, 
-    advice: "Video bên PHẢI lộ lỗi render nguồn sáng. Điểm sáng trong mắt trái và phải không cùng vị trí, chứng tỏ mặt được ghép từ nhiều nguồn ảnh khác nhau.",
-    video_url: "https://youtu.be/-wenF_aW-gM",
-    timestamp_glitch: "Cận cảnh (Close-up)",
+    advice: "Video bên PHẢI là AI. Lỗi 'Material Texture': Kết cấu vật liệu trông giống cao su hoặc polymer đặc hơn là các hạt cát nén. AI không render được sự sụp đổ của từng hạt cát nhỏ khi dao đi qua.",
+    video_url: "https://youtu.be/hglX1Q93en8",
+    timestamp_glitch: "0:03 - 0:07",
     technical_flaws: [
-      { feature: "Catchlight", real_behavior: "Hình dáng và vị trí điểm sáng khớp với nguồn sáng phòng.", ai_error: "Hình dáng điểm sáng bị lệch hoặc có hình dạng kỳ lạ (hình vuông)." },
-      { feature: "Mạch máu mắt", real_behavior: "Có các vi mạch nhỏ li ti tự nhiên.", ai_error: "Lòng trắng quá sạch hoặc có độ mịn nhân tạo." }
+      { feature: "Sụp đổ vật liệu", real_behavior: "Rơi vụn thành hạt li ti ngay lập tức.", ai_error: "Dính mảng lớn, trông dẻo như đất sét." }
     ]
   },
   { 
-    title: "VI BIỂU CẢM VÙNG MẮT (MICRO-EXPRESSIONS)", 
-    desc: "Để ý các nếp nhăn nhỏ khi nhân vật cười hoặc nói.", 
-    hint: "Cảm xúc thật luôn đi kèm với sự co thắt của các cơ quanh mắt (Orbicularis oculi).",
-    fake_pos: 1, 
-    advice: "Video bên TRÁI là 'mặt nạ AI'. Miệng cười nhưng vùng mắt hoàn toàn bất động, không có nếp nhăn chân chim xuất hiện.",
-    video_url: "https://youtu.be/J52kFGgVMpc",
+    id: "v4",
+    title: "GIA ĐÌNH LEGO (FAMILY LEGO)", 
+    difficulty: "Dễ",
+    desc: "Soi kỹ bàn tay và các chi tiết khuôn mặt của nhân vật.", 
+    hint: "AI thường 'sáng tạo' thêm ngón tay hoặc làm mờ các chi tiết khớp nối nhỏ.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI là AI. Lỗi 'Biological Inconsistency': Bàn tay nhân vật có cấu trúc ngón không rõ ràng, các khối Lego bị hòa lẫn vào da người thay vì tách biệt hoàn toàn.",
+    video_url: "https://youtu.be/-wenF_aW-gM",
+    timestamp_glitch: "Cận cảnh bàn tay",
     technical_flaws: [
-      { feature: "Nếp nhăn động", real_behavior: "Xuất hiện và biến mất theo nhịp biểu cảm.", ai_error: "Vùng trán và quanh mắt quá mịn, không thay đổi theo nụ cười." },
-      { feature: "Nhịp nháy mắt", real_behavior: "Tự nhiên, không đều đặn (vô thức).", ai_error: "Quá đều hoặc quá lâu không nháy mắt." }
-    ],
-    timestamp_glitch: "0:15 - 0:22"
+      { feature: "Số lượng ngón tay", real_behavior: "5 ngón rõ ràng, khớp nối tự nhiên.", ai_error: "Ngón tay dính nhau hoặc có 6 ngón." }
+    ]
+  },
+  { 
+    id: "v5",
+    title: "CHUỒN CHUỒN (DRAGONFLY)", 
+    difficulty: "Dễ",
+    desc: "Nhìn kỹ vào gân cánh và độ rung của đôi cánh.", 
+    hint: "Cánh chuồn chuồn thật có cấu trúc gân như mạng nhện, cực kỳ sắc nét.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI là AI. Lỗi 'Fine Detail Rendering': Cánh chuồn chuồn bị mờ đục (opaque) và thiếu hệ thống gân cánh phức tạp. AI dùng chuyển động mờ (motion blur) để che giấu việc không render được chi tiết cực nhỏ.",
+    video_url: "https://youtu.be/pP3-hpkg6Ps",
+    timestamp_glitch: "0:12",
+    technical_flaws: [
+      { feature: "Độ trong suốt cánh", real_behavior: "Trong suốt với mạng lưới gân đen rõ rệt.", ai_error: "Mờ như nhựa đục, mất chi tiết gân." }
+    ]
+  },
+  { 
+    id: "v6",
+    title: "HƯƠU CAO CỔ (GIRAFFE)", 
+    difficulty: "Trung bình",
+    desc: "Phân tích bước chân và sự tương tác với mặt đất.", 
+    hint: "Để ý hiện tượng 'trượt chân' (skating) khi con vật di chuyển.",
+    fake_pos: 1, 
+    advice: "Video bên TRÁI là AI. Lỗi 'Temporal Consistency': Chân hươu cao cổ có hiện tượng trượt trên mặt đất thay vì bám trụ chắc chắn. Viền thân cũng bị 'lem' màu vào phông nền phía sau.",
+    video_url: "https://youtu.be/J52kFGgVMpc",
+    timestamp_glitch: "0:10 - 0:15",
+    technical_flaws: [
+      { feature: "Tiếp xúc bề mặt", real_behavior: "Bàn chân cố định tại một điểm khi chạm đất.", ai_error: "Bàn chân trượt nhẹ hoặc xuyên qua mặt đất." }
+    ]
+  },
+  { 
+    id: "v7",
+    title: "THIÊN NGA (SWANS)", 
+    difficulty: "Trung bình",
+    desc: "Nhìn vào hình ảnh phản chiếu trên mặt nước.", 
+    hint: "Phản chiếu phải là hình ảnh đối xứng hoàn hảo qua trục mặt nước.",
+    fake_pos: 1, 
+    advice: "Video bên TRÁI là AI. Lỗi 'Reflection Logic': Hình ảnh phản chiếu dưới nước của con thiên nga không khớp với cử động thực tế phía trên. AI thường render phông nền và phản chiếu độc lập dẫn đến sai lệch vật lý.",
+    video_url: "https://youtu.be/jLXuTEAd0eY",
+    timestamp_glitch: "Mặt nước",
+    technical_flaws: [
+      { feature: "Đối xứng phản chiếu", real_behavior: "Chuyển động trên và dưới mặt nước đồng bộ 100%.", ai_error: "Phản chiếu bị trễ nhịp hoặc hình dạng khác biệt." }
+    ]
+  },
+  { 
+    id: "v8",
+    title: "TAY VÀ CÂY (HANDS/TREES)", 
+    difficulty: "Khó",
+    desc: "Đánh giá chất liệu da và cấu trúc nhành cây.", 
+    hint: "Da AI thường có độ bóng như sáp (waxy) và thiếu các nếp gấp vi mô.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI là AI. Lỗi 'Subsurface Scattering': Ánh sáng xuyên qua da trông không thực tế, tạo cảm giác da như làm bằng nhựa sáp. Các nhành cây phía sau bị biến dạng khi tay lướt qua.",
+    video_url: "https://youtu.be/7T0pGbJJcnE",
+    timestamp_glitch: "Viền ngón tay",
+    technical_flaws: [
+      { feature: "Kết cấu biểu bì", real_behavior: "Có lỗ chân lông, nếp nhăn và vết nám nhẹ.", ai_error: "Mịn màng quá mức, bóng loáng như sáp mỳ." }
+    ]
+  },
+  { 
+    id: "v9",
+    title: "HOÀNG HÔN (SUNSET)", 
+    difficulty: "Khó",
+    desc: "Quan sát sự biến đổi của các đám mây.", 
+    hint: "Mây thật di chuyển theo khối, không tự nhiên sinh ra hoặc mất đi giữa chừng.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI là AI. Lỗi 'Latent Space Morphing': Các đám mây nhỏ có hiện tượng tự biến hình (morphing) thành hình dạng khác hoặc biến mất rồi xuất hiện lại một cách vô lý.",
+    video_url: "https://youtu.be/AQ8VkGH9hk0",
+    timestamp_glitch: "Góc trên bên phải",
+    technical_flaws: [
+      { feature: "Tính nhất quán của mây", real_behavior: "Di chuyển tịnh tiến theo hướng gió.", ai_error: "Hình dáng mây co giãn hoặc thay đổi cấu trúc liên tục." }
+    ]
+  },
+  { 
+    id: "v10",
+    title: "THÁC NƯỚC (WATERFALL)", 
+    difficulty: "Khó",
+    desc: "Phân tích dòng chảy của nước đổ xuống.", 
+    hint: "Nước rơi có trọng lực, không lơ lửng như khói.",
+    fake_pos: 2, 
+    advice: "Video bên PHẢI là AI. Lỗi 'Motion Loop': Dòng nước trông giống như làn khói đang bay hơn là nước rơi có trọng lượng. AI cũng tạo ra một vòng lặp (loop) lộ liễu khiến dòng chảy trông rất máy móc.",
+    video_url: "https://youtu.be/8Kmnc2jGE74",
+    timestamp_glitch: "Chân thác nước",
+    technical_flaws: [
+      { feature: "Khối lượng dòng chảy", real_behavior: "Nước đổ xuống có bọt trắng và áp lực mạnh.", ai_error: "Nước trông nhẹ như mây khói, chuyển động lặp lại." }
+    ]
+  },
+];
+
+export const EDUCATIONAL_RULES = [
+  {
+    title: "QUY TẮC 1: VẬT LÝ & TRỌNG LỰC",
+    content: "AI thường gặp khó khăn trong việc mô phỏng 'khối lượng' và 'áp suất'. Trong các ví dụ như thác nước hay cát, hãy để ý xem vật liệu có rơi tự nhiên theo trọng lực không, hay nó lơ lửng và biến hình như khói. Chất lỏng thật luôn có sự hỗn loạn và không bao giờ chảy theo những đường cong mượt mà tuyệt đối."
+  },
+  {
+    title: "QUY TẮC 2: CHI TIẾT SINH HỌC",
+    content: "Cấu trúc con người là rào cản lớn nhất của AI. Hãy soi kỹ bàn tay (số lượng ngón, khớp nối), ánh mắt (điểm phản chiếu ánh sáng phải đồng nhất) và texture da (da thật có lỗ chân lông, nếp nhăn chân chim khi cười). AI thường 'làm mịn' quá mức khiến mọi thứ trông như nhựa sáp hoặc làm dính các chi tiết vào nhau."
+  },
+  {
+    title: "QUY TẮC 3: TÍNH NHẤT QUÁN MÔI TRƯỜNG",
+    content: "Hãy nhìn vào phông nền và các hình ảnh phản chiếu. Một lỗi kinh điển của AI là 'Skating' (con vật di chuyển nhưng chân bị trượt trên nền) hoặc phản chiếu dưới nước không khớp với vật thể phía trên. Các vật thể ở hậu cảnh cũng thường bị méo mó (warping) khi có vật thể ở tiền cảnh chuyển động đi qua."
   }
 ];
 
 export const PERSONALITY_QUESTIONS: PersonalityQuestion[] = [
-    { id: "q1", text: "Tôi cảm thấy tự tin hơn khi phân biệt thật giả.", trait: "CONFIDENCE" },
-    { id: "q2", text: "Tôi vẫn cảm thấy lo lắng vì AI quá giống thật.", trait: "ANXIETY" },
-    { id: "q3", text: "Tôi sẽ luôn kiểm chứng lại các cuộc gọi video.", trait: "SKEPTICISM" },
-    { id: "q4", text: "Tôi đã nhận biết được các lỗi hình ảnh cơ bản.", trait: "AWARENESS" }
+    { id: "q1", text: "Tôi thường xuyên sử dụng mạng xã hội và tin vào các video tin tức.", trait: "AWARENESS" },
+    { id: "q2", text: "Tôi cảm thấy mình có khả năng nhận ra video giả mạo chỉ sau vài giây.", trait: "CONFIDENCE" },
+    { id: "q3", text: "Tôi luôn có thói quen kiểm tra nguồn gốc của một video lạ.", trait: "SKEPTICISM" },
+    { id: "q4", text: "Tôi cảm thấy lo lắng khi AI có thể bắt chước người thân của mình.", trait: "ANXIETY" }
 ];
 
 export const CHECKLIST_DATA: ChecklistItem[] = [
