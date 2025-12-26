@@ -1,20 +1,33 @@
-import React, { useState } from 'react';
-import { CHECKLIST_DATA } from '../data';
-import { ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, Info, Gavel, Smartphone } from 'lucide-react';
 
-const KnowledgeItem = ({ title, children }: { title: string, children?: React.ReactNode }) => {
+import React, { useState } from 'react';
+import { CHECKLIST_DATA, KNOWLEDGE_BASE } from '../data';
+import { Language } from '../types';
+import { ChevronDown, ChevronUp, ShieldCheck, Search, Zap, Brain, Activity, Info, Gavel, HeartHandshake, Laptop } from 'lucide-react';
+
+// Defined explicit interface for KnowledgeItem props
+interface KnowledgeItemProps {
+  title: string;
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
+}
+
+// Updated KnowledgeItem to use React.FC for better type safety with reserved props like 'key'
+const KnowledgeItem: React.FC<KnowledgeItemProps> = ({ title, children, icon }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="bg-surface border border-border rounded-lg overflow-hidden transition-all duration-300 hover:border-primary/50">
+        <div className="bg-surface border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/50 shadow-lg mb-6">
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-colors text-left"
             >
-                <span className="font-bold text-white text-lg">{title}</span>
-                {isOpen ? <ChevronUp size={20} className="text-primary" /> : <ChevronDown size={20} className="text-gray-500" />}
+                <div className="flex items-center gap-4">
+                    <div className="text-primary">{icon}</div>
+                    <span className="font-black text-white text-sm uppercase tracking-widest italic">{title}</span>
+                </div>
+                {isOpen ? <ChevronUp size={18} className="text-primary" /> : <ChevronDown size={18} className="text-gray-500" />}
             </button>
             {isOpen && (
-                <div className="p-5 border-t border-border bg-black/20 animate-in slide-in-from-top-2 duration-200">
+                <div className="p-8 border-t border-white/5 bg-black/40 animate-in slide-in-from-top-2 duration-200">
                     {children}
                 </div>
             )}
@@ -24,9 +37,10 @@ const KnowledgeItem = ({ title, children }: { title: string, children?: React.Re
 
 interface ToolsProps {
   initialTab?: 'SCAN' | 'KNOWLEDGE';
+  lang: Language;
 }
 
-const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
+const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN', lang }) => {
   const [activeTab, setActiveTab] = useState<'SCAN' | 'KNOWLEDGE'>(initialTab);
   const [checks, setChecks] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<number | null>(null);
@@ -40,54 +54,64 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
 
   const analyzeRisk = () => {
     setResult(checks.size);
-    // Scroll to result
     setTimeout(() => {
         const el = document.getElementById('risk-result');
         el?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
+  const getKnowledgeIcon = (category: string) => {
+    if (category.includes('PHÁP LUẬT') || category.includes('LAW')) return <Gavel size={20}/>;
+    if (category.includes('ĐỜI SỐNG') || category.includes('LIFE')) return <HeartHandshake size={20}/>;
+    return <Laptop size={20}/>;
+  };
+
   return (
-    <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+    <div className="animate-in fade-in duration-500 max-w-7xl mx-auto px-4 py-8">
       {/* Tabs */}
-      <div className="flex justify-center mb-10">
-          <div className="bg-surface p-1 rounded-lg border border-border inline-flex">
+      <div className="flex justify-center mb-16">
+          <div className="bg-surface p-1.5 rounded-2xl border border-white/5 inline-flex shadow-2xl">
             <button 
                 onClick={() => setActiveTab('SCAN')}
-                className={`px-8 py-3 rounded-md font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'SCAN' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                className={`px-10 py-3.5 rounded-xl font-black text-xs transition-all flex items-center gap-2 tracking-[0.2em] uppercase ${activeTab === 'SCAN' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:text-white'}`}
             >
-                ⚡ QUICK SCAN
+                <Search size={14} /> QUICK SCAN
             </button>
             <button 
                 onClick={() => setActiveTab('KNOWLEDGE')}
-                className={`px-8 py-3 rounded-md font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'KNOWLEDGE' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                className={`px-10 py-3.5 rounded-xl font-black text-xs transition-all flex items-center gap-2 tracking-[0.2em] uppercase ${activeTab === 'KNOWLEDGE' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:text-white'}`}
             >
-                📚 KIẾN THỨC
+                <Zap size={14} /> {lang === 'vi' ? 'KIẾN THỨC NỀN TẢNG' : 'CORE KNOWLEDGE'}
             </button>
           </div>
       </div>
 
       {activeTab === 'SCAN' && (
-        <div>
-            <div className="text-center mb-10">
-                <h2 className="text-3xl font-serif font-bold mb-3 text-white">CÔNG CỤ RÀ SOÁT RỦI RO</h2>
-                <p className="text-gray-500 max-w-2xl mx-auto">Sử dụng danh sách kiểm tra này khi bạn nhận được cuộc gọi video đáng ngờ. Đánh dấu vào các biểu hiện bạn quan sát được.</p>
+        <div className="animate-in slide-in-from-bottom-4 duration-500">
+            <div className="text-center mb-12">
+                <h2 className="text-5xl font-black mb-4 text-white italic uppercase tracking-tighter leading-none">{lang === 'vi' ? 'RÀ SOÁT RỦI RO' : 'RISK SCANNING'}</h2>
+                <p className="text-gray-500 max-w-2xl mx-auto italic text-sm">
+                  {lang === 'vi' 
+                    ? 'Hãy đánh dấu các biểu hiện bất thường mà bạn quan sát được trong video call.'
+                    : 'Check the abnormal signs observed during the video call.'}
+                </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {CHECKLIST_DATA.map((cat) => (
-                    <div key={cat.category} className="bg-surface border border-border rounded-xl overflow-hidden hover:border-gray-600 transition-colors">
-                        <div className="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-2">
-                            <span className="font-bold text-white">{cat.category}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                {CHECKLIST_DATA[lang].map((cat) => (
+                    <div key={cat.category} className="bg-surface border border-white/5 rounded-3xl overflow-hidden shadow-xl hover:border-primary/20 transition-all group">
+                        <div className="bg-white/5 border-b border-white/5 p-6 flex items-center gap-3">
+                            <div className="h-2.5 w-2.5 bg-primary rounded-full animate-pulse"></div>
+                            <span className="font-black text-white text-xs uppercase tracking-[0.2em] italic">{cat.category}</span>
                         </div>
-                        <div className="p-4 space-y-4">
+                        <div className="p-8 space-y-4">
                             {cat.items.map((item) => (
-                                <label key={item} className="flex items-start gap-3 cursor-pointer group p-2 rounded hover:bg-white/5 transition-colors">
-                                    <div className={`shrink-0 w-6 h-6 mt-0.5 rounded border-2 flex items-center justify-center transition-all duration-300 ${checks.has(item) ? 'bg-primary border-primary scale-110' : 'border-gray-600 group-hover:border-primary'}`}>
-                                        {checks.has(item) && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
+                                <label key={item} className="flex items-center gap-4 cursor-pointer group p-4 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
+                                    <div className={`shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${checks.has(item) ? 'bg-primary border-primary rotate-90 shadow-[0_0_10px_rgba(0,240,255,0.4)]' : 'border-gray-700 group-hover:border-primary/50'}`}>
+                                        {checks.has(item) && <div className="w-2 h-2 bg-black rounded-sm" />}
                                     </div>
                                     <input type="checkbox" className="hidden" checked={checks.has(item)} onChange={() => toggleCheck(item)} />
-                                    <span className={`text-sm transition-colors ${checks.has(item) ? 'text-white font-medium' : 'text-gray-400 group-hover:text-gray-300'}`}>{item}</span>
+                                    <span className={`text-[13px] transition-colors italic leading-relaxed ${checks.has(item) ? 'text-white font-bold' : 'text-gray-500'}`}>{item}</span>
                                 </label>
                             ))}
                         </div>
@@ -95,72 +119,59 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
                 ))}
             </div>
 
-            <div className="text-center mb-12">
+            <div className="text-center mb-16">
                 <button 
                     onClick={analyzeRisk}
-                    className="bg-transparent border-2 border-primary text-primary hover:bg-primary hover:text-black px-10 py-4 rounded font-mono font-bold text-lg transition-all shadow-[0_0_15px_rgba(0,240,255,0.2)] hover:scale-105 active:scale-95"
+                    className="bg-primary text-black px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 flex items-center gap-3 mx-auto"
                 >
-                    🔬 PHÂN TÍCH KẾT QUẢ
+                    <ActivityIcon size={18} /> {lang === 'vi' ? 'BẮT ĐẦU PHÂN TÍCH RỦI RO' : 'START RISK ANALYSIS'}
                 </button>
             </div>
 
             {result !== null && (
                 <div id="risk-result" className="animate-in slide-in-from-bottom-8 duration-700 scroll-mt-24">
-                    {result === 0 ? (
-                        <div className="bg-success/10 border-2 border-success rounded-xl p-8 text-center mb-8 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10"><ShieldCheck size={100} /></div>
-                            <div className="text-5xl mb-4">✅</div>
-                            <h3 className="text-success font-bold text-2xl mb-2">AN TOÀN</h3>
-                            <p className="text-gray-300">Không phát hiện dấu hiệu Deepfake. Tuy nhiên, luôn giữ cảnh giác!</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <div className="lg:col-span-5">
+                            {result === 0 ? (
+                                <div className="bg-success/5 border-2 border-success/30 rounded-3xl p-12 text-center relative overflow-hidden shadow-2xl">
+                                    <div className="text-6xl mb-8">✅</div>
+                                    <h3 className="text-success font-black text-3xl mb-4 italic uppercase tracking-tighter">{lang === 'vi' ? 'HỆ THỐNG AN TOÀN' : 'SYSTEM SECURE'}</h3>
+                                    <p className="text-gray-400 text-sm italic leading-relaxed">{lang === 'vi' ? 'Không phát hiện dấu hiệu giả mạo rõ rệt. Tuy nhiên, hãy luôn duy trì sự cảnh giác trước các yêu cầu chuyển tiền.' : 'No clear signs of deepfake detected. However, remain high vigilance regarding money transfers.'}</p>
+                                </div>
+                            ) : result <= 2 ? (
+                                <div className="bg-warning/5 border-2 border-warning/30 rounded-3xl p-12 text-center relative overflow-hidden shadow-2xl">
+                                    <div className="text-6xl mb-8">⚠️</div>
+                                    <h3 className="text-warning font-black text-3xl mb-4 italic uppercase tracking-tighter">{lang === 'vi' ? 'CẢNH BÁO RỦI RO' : 'RISK WARNING'}</h3>
+                                    <p className="text-gray-400 text-sm italic leading-relaxed">{lang === 'vi' ? `Ghi nhận ${result} biểu hiện bất thường. Chúng tôi khuyến nghị bạn thực hiện xác minh chéo qua cuộc gọi GSM.` : `${result} anomalies recorded. Cross-verification via GSM call recommended.`}</p>
+                                </div>
+                            ) : (
+                                <div className="bg-secondary/5 border-2 border-secondary/30 rounded-3xl p-12 text-center relative overflow-hidden shadow-2xl">
+                                    <div className="text-6xl mb-8 animate-pulse">🚨</div>
+                                    <h3 className="text-secondary font-black text-3xl mb-4 italic uppercase tracking-tighter">{lang === 'vi' ? 'NGUY HIỂM CỰC ĐỘ' : 'EXTREME DANGER'}</h3>
+                                    <p className="text-white font-bold text-sm italic leading-relaxed">{lang === 'vi' ? 'DẤU HIỆU LỪA ĐẢO RÕ RỆT. NGẮT KẾT NỐI NGAY LẬP TỨC VÀ KHÔNG CHUYỂN TIỀN!' : 'CLEAR DEEPFAKE SIGNS. DISCONNECT IMMEDIATELY AND DO NOT TRANSFER MONEY!'}</p>
+                                </div>
+                            )}
                         </div>
-                    ) : result <= 3 ? (
-                        <div className="bg-warning/10 border-2 border-warning rounded-xl p-8 text-center mb-8 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10"><AlertTriangle size={100} /></div>
-                            <div className="text-5xl mb-4">⚠️</div>
-                            <h3 className="text-warning font-bold text-2xl mb-2">CẢNH BÁO ({result} dấu hiệu)</h3>
-                            <p className="text-gray-300">Phát hiện điểm bất thường. Hãy yêu cầu gọi lại bằng SĐT di động thông thường.</p>
-                        </div>
-                    ) : (
-                        <div className="bg-secondary/10 border-2 border-secondary rounded-xl p-8 text-center mb-8 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10"><AlertTriangle size={100} /></div>
-                            <div className="text-5xl mb-4 animate-bounce">🚨</div>
-                            <h3 className="text-secondary font-bold text-3xl mb-2">NGUY HIỂM CAO ({result} dấu hiệu)</h3>
-                            <p className="text-white font-bold text-lg">99% ĐÂY LÀ LỪA ĐẢO. NGẮT KẾT NỐI NGAY LẬP TỨC!</p>
-                        </div>
-                    )}
 
-                    <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 shadow-2xl">
-                        <h3 className="text-white font-bold text-xl mb-6 flex items-center gap-3 border-b border-gray-700 pb-4">
-                            <ShieldCheck className="text-primary"/> QUY TRÌNH XỬ LÝ KHẨN CẤP
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 text-white font-bold shrink-0">1</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Ngắt cuộc gọi ngay</strong>
-                                    <p className="text-sm text-gray-400">Không nghe giải thích, không chần chừ.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white font-bold shrink-0">2</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Xác minh chéo</strong>
-                                    <p className="text-sm text-gray-400">Gọi lại bằng số điện thoại di động (GSM) thông thường.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white font-bold shrink-0">3</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Kiểm tra "Liveness"</strong>
-                                    <p className="text-sm text-gray-400">Yêu cầu người gọi quay mặt sang trái/phải hoặc đưa tay lên che mặt.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white font-bold shrink-0">4</span>
-                                <div>
-                                    <strong className="text-white block mb-1">Báo cáo cơ quan</strong>
-                                    <p className="text-sm text-gray-400">Liên hệ 113 hoặc ngân hàng nếu đã lỡ chuyển tiền.</p>
-                                </div>
+                        <div className="lg:col-span-7 bg-surface border border-white/5 rounded-3xl p-10 shadow-2xl">
+                            <h3 className="text-white font-black text-[10px] mb-8 flex items-center gap-3 uppercase tracking-[0.3em] italic border-b border-white/5 pb-6">
+                                <ShieldCheck className="text-primary" size={20}/> {lang === 'vi' ? 'QUY TRÌNH PHẢN ỨNG KHẨN CẤP' : 'EMERGENCY RESPONSE PROTOCOL'}
+                            </h3>
+                            <div className="space-y-8">
+                                {[
+                                    { step: 1, title: lang === 'vi' ? 'DỪNG CUỘC GỌI' : 'STOP CALL', desc: lang === 'vi' ? 'Ngắt kết nối video ngay lập tức khi phát hiện nghi vấn.' : 'End the video connection immediately upon suspicion.' },
+                                    { step: 2, title: lang === 'vi' ? 'XÁC THỰC NGOẠI TUYẾN' : 'OFFLINE VERIFY', desc: lang === 'vi' ? 'Gọi lại bằng sim điện thoại truyền thống hoặc gặp mặt trực tiếp.' : 'Call back via traditional SIM or meet in person.' },
+                                    { step: 3, title: lang === 'vi' ? 'KIỂM TRA SINH TRẮC' : 'BIOMETRIC TEST', desc: lang === 'vi' ? 'Yêu cầu người gọi đưa tay ngang mặt hoặc quay nghiêng 90 độ.' : 'Ask caller to wave hand across face or turn head 90 degrees.' },
+                                    { step: 4, title: lang === 'vi' ? 'BÁO CÁO NHÀ CHỨC TRÁCH' : 'REPORT', desc: lang === 'vi' ? 'Thông báo cho ngân hàng và cơ quan công an gần nhất.' : 'Inform your bank and the nearest police department.' },
+                                ].map((item) => (
+                                    <div key={item.step} className="flex gap-6 items-start">
+                                        <div className="h-10 w-10 bg-black border border-white/10 rounded-xl flex items-center justify-center shrink-0 text-primary font-mono font-bold text-sm shadow-inner">{item.step}</div>
+                                        <div>
+                                            <div className="text-white font-black text-xs uppercase tracking-widest italic mb-1.5">{item.title}</div>
+                                            <p className="text-gray-500 text-[11px] italic leading-relaxed">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -170,107 +181,47 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
       )}
 
       {activeTab === 'KNOWLEDGE' && (
-        <div className="space-y-4">
-            <div className="text-center mb-8">
-                <h2 className="text-2xl font-serif font-bold mb-2">KIẾN THỨC CỐT LÕI</h2>
-                <p className="text-gray-500">Hiểu rõ kẻ thù để phòng vệ hiệu quả hơn</p>
+        <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <div className="text-center mb-16">
+                <h2 className="text-5xl font-black mb-4 text-white italic uppercase tracking-tighter leading-none">{lang === 'vi' ? 'KIẾN THỨC NỀN TẢNG' : 'CORE KNOWLEDGE'}</h2>
+                <p className="text-gray-400 italic text-sm">{lang === 'vi' ? 'Nâng cao nhận thức để tự bảo vệ mình trong không gian số' : 'Raise awareness to protect yourself in the digital space'}</p>
             </div>
             
-            {/* Sắp xếp: Hành động > Bản chất > Lý do > Phòng ngừa > Pháp lý */}
+            {KNOWLEDGE_BASE[lang] ? KNOWLEDGE_BASE[lang].map((cat: any, idx: number) => (
+                <KnowledgeItem key={idx} title={cat.category} icon={getKnowledgeIcon(cat.category)}>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {cat.items.map((item: any, i: number) => (
+                            <div key={i} className="bg-black/40 p-6 rounded-2xl border border-white/5 hover:border-primary/20 transition-all group">
+                                <h4 className="text-primary font-black text-[10px] uppercase tracking-widest mb-3 italic">{item.title}</h4>
+                                <p className="text-[11px] text-gray-400 italic leading-relaxed">{item.content}</p>
+                            </div>
+                        ))}
+                    </div>
+                </KnowledgeItem>
+            )) : (
+               // Fallback if structured data fails
+               <div className="text-center py-20 text-gray-600 italic">Dữ liệu đang được cập nhật...</div>
+            )}
 
-            <KnowledgeItem title="✅ QUY TRÌNH XÁC THỰC 4 BƯỚC (QUAN TRỌNG NHẤT)">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                        { step: 1, title: "NGẮT MÁY", sub: "Không cần giải thích", color: "#FF2A6D" },
-                        { step: 2, title: "GỌI LẠI", sub: "SĐT đã lưu sẵn", color: "#FFD700" },
-                        { step: 3, title: "XÁC THỰC", sub: "Quay mặt, đưa tay", color: "#00F0FF" },
-                        { step: 4, title: "BÁO CÁO", sub: "Hotline 113", color: "#05FF00" },
-                    ].map((s) => (
-                        <div key={s.step} className="bg-black/40 p-4 rounded text-center border-t-4" style={{ borderColor: s.color }}>
-                            <div className="text-3xl font-black" style={{ color: s.color }}>{s.step}</div>
-                            <div className="text-xs font-bold text-white mt-1">{s.title}</div>
-                            <div className="text-[0.6rem] text-gray-500">{s.sub}</div>
+            {/* Default Hardcoded knowledge for safety */}
+            <KnowledgeItem title={lang === 'vi' ? "🛡️ CHIẾN LƯỢC PHÒNG VỆ" : "🛡️ DEFENSE STRATEGY"} icon={<ShieldCheck size={20}/>}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[12px] text-gray-400 italic leading-relaxed">
+                    <div className="bg-black/60 p-8 rounded-3xl border border-white/5 hover:border-primary/20 transition-all">
+                        <div className="text-primary font-black text-xs mb-6 uppercase tracking-widest italic flex items-center gap-2">
+                           <Brain size={14}/> QUY TẮC "CHẬM LẠI 1 NHỊP"
                         </div>
-                    ))}
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="⚙️ DEEPFENSE HOẠT ĐỘNG NHƯ NÀO? (DỄ HIỂU)">
-                 <div className="mb-4 text-gray-300">
-                    Deepfake sử dụng 2 hệ thống AI đấu đá lẫn nhau (gọi là GANs), hãy tưởng tượng như sau:
-                 </div>
-                 <div className="flex flex-col md:flex-row gap-4 mb-6 items-stretch justify-center">
-                    <div className="bg-black/40 p-5 rounded flex-1 border border-secondary/30 text-center">
-                        <div className="text-4xl mb-2">🎨</div>
-                        <div className="text-secondary font-bold mb-2">AI TẠO GIẢ (Họa sĩ lừa đảo)</div>
-                        <p className="text-xs text-gray-400">Cố gắng vẽ khuôn mặt giả sao cho giống thật nhất có thể để đánh lừa.</p>
-                    </div>
-                    
-                    <div className="flex items-center justify-center text-gray-500 font-bold">VS</div>
-
-                    <div className="bg-black/40 p-5 rounded flex-1 border border-success/30 text-center">
-                        <div className="text-4xl mb-2">👮</div>
-                        <div className="text-success font-bold mb-2">AI SOI LỖI (Cảnh sát giám định)</div>
-                        <p className="text-xs text-gray-400">Cố gắng phát hiện ra đâu là ảnh giả. Nếu phát hiện được, bắt AI kia vẽ lại.</p>
-                    </div>
-                 </div>
-                 <div className="bg-primary/5 p-4 rounded text-sm text-gray-300 text-center border border-primary/20">
-                    <strong className="text-primary">KẾT QUẢ:</strong> Sau hàng triệu lần "đấu đá", AI Tạo Giả sẽ vẽ giỏi đến mức AI Soi Lỗi không nhận ra được nữa. Đó là lúc Deepfake hoàn thiện.
-                 </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="🧠 TẠI SAO MẮT NGƯỜI DỄ BỊ LỪA?">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-black/40 p-5 rounded border-l-4 border-primary">
-                        <div className="text-primary font-bold mb-3 flex items-center gap-2"><Info size={16}/> NGUYÊN NHÂN TÂM LÝ</div>
-                        <ul className="text-sm text-gray-300 space-y-3 list-disc list-inside">
-                            <li>Não bộ con người ưu tiên tin vào <strong className="text-white">thị giác</strong> hơn các giác quan khác.</li>
-                            <li>Kẻ lừa đảo thường tạo <strong className="text-white">tình huống khẩn cấp</strong> (tai nạn, cấp cứu) khiến nạn nhân hoảng loạn, bỏ qua tư duy phản biện.</li>
-                            <li>Sự tin tưởng vào người thân/cấp trên làm giảm sự đề phòng.</li>
+                        <ul className="space-y-4">
+                            <li className="flex gap-4 items-start"><span className="text-primary font-black mt-1">•</span> {lang === 'vi' ? 'Luôn dành ít nhất 30 giây suy nghĩ trước khi thực hiện bất kỳ giao dịch nào.' : 'Always take at least 30 seconds to think before any transaction.'}</li>
+                            <li className="flex gap-4 items-start"><span className="text-primary font-black mt-1">•</span> {lang === 'vi' ? 'Kiểm tra chéo: Dùng sim thường gọi lại cho người thân để xác nhận.' : 'Cross-check: Use normal SIM to call back relatives for confirmation.'}</li>
                         </ul>
                     </div>
-                    <div className="bg-black/40 p-5 rounded border-l-4 border-success">
-                        <div className="text-success font-bold mb-3 flex items-center gap-2"><ShieldCheck size={16}/> GIẢI PHÁP TÂM LÝ</div>
-                        <ul className="text-sm text-gray-300 space-y-3 list-disc list-inside">
-                            <li>Luôn tuân thủ nguyên tắc: <strong className="text-white">"Chậm lại 1 nhịp"</strong>.</li>
-                            <li>Tự đặt câu hỏi: "Tại sao họ lại hối thúc mình chuyển tiền?".</li>
-                            <li>Thiết lập "Mật khẩu gia đình" (Code word) để xác thực người thân.</li>
-                        </ul>
-                    </div>
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="📱 VỆ SINH SỐ (DIGITAL HYGIENE)">
-                <div className="flex gap-4 items-start">
-                    <div className="bg-surface p-3 rounded-full border border-gray-700 shrink-0">
-                        <Smartphone className="text-blue-400" size={24} />
-                    </div>
-                    <div>
-                        <p className="text-gray-300 text-sm mb-3">
-                            Để tránh bị lấy hình ảnh làm nguyên liệu huấn luyện Deepfake, bạn nên:
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🔒 Hạn chế đăng ảnh rõ mặt ở chế độ Công khai (Public).</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🚫 Không chia sẻ dữ liệu sinh trắc học bừa bãi.</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">👀 Cẩn trọng với các ứng dụng "Xem khuôn mặt già đi" hoặc "Ghép mặt vào phim".</div>
-                            <div className="bg-black/30 p-2 rounded text-gray-400">🔐 Bật xác thực 2 bước (2FA) cho mọi tài khoản MXH.</div>
+                    <div className="bg-black/60 p-8 rounded-3xl border border-white/5 hover:border-success/20 transition-all">
+                        <div className="text-success font-black text-xs mb-6 uppercase tracking-widest italic flex items-center gap-2">
+                           <HeartHandshake size={14}/> MẬT MÃ GIA ĐÌNH
                         </div>
-                    </div>
-                </div>
-            </KnowledgeItem>
-
-            <KnowledgeItem title="⚖️ PHÁP LÝ & XỬ PHẠT TẠI VIỆT NAM">
-                <div className="flex gap-4 items-start">
-                    <div className="bg-surface p-3 rounded-full border border-gray-700 shrink-0">
-                        <Gavel className="text-warning" size={24} />
-                    </div>
-                    <div>
-                        <p className="text-gray-300 text-sm mb-3">
-                            Theo pháp luật Việt Nam, hành vi sử dụng Deepfake để lừa đảo chiếm đoạt tài sản có thể bị truy cứu trách nhiệm hình sự:
-                        </p>
-                        <ul className="space-y-2 text-sm text-gray-400">
-                            <li className="flex gap-2"><span className="text-warning">•</span> <strong>Tội lừa đảo chiếm đoạt tài sản (Điều 174 BLHS):</strong> Phạt tù lên đến 20 năm hoặc tù chung thân.</li>
-                            <li className="flex gap-2"><span className="text-warning">•</span> <strong>Tội sử dụng mạng máy tính thực hiện hành vi chiếm đoạt tài sản (Điều 290 BLHS):</strong> Phạt tù lên đến 20 năm.</li>
+                        <ul className="space-y-4">
+                            <li className="flex gap-4 items-start"><span className="text-success font-black mt-1">•</span> {lang === 'vi' ? 'Thiết lập một từ khóa bí mật hoặc một câu hỏi riêng tư mà chỉ người thân mới trả lời được.' : 'Establish a keyword or private question only family members can answer.'}</li>
+                            <li className="flex gap-4 items-start"><span className="text-success font-black mt-1">•</span> {lang === 'vi' ? 'Cập nhật mật mã định kỳ 3 tháng một lần để đảm bảo an toàn.' : 'Update the code every 3 months for safety.'}</li>
                         </ul>
                     </div>
                 </div>
@@ -280,5 +231,10 @@ const Tools: React.FC<ToolsProps> = ({ initialTab = 'SCAN' }) => {
     </div>
   );
 };
+
+// Helper icon
+const ActivityIcon = ({size, className}: any) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+)
 
 export default Tools;

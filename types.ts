@@ -1,16 +1,24 @@
 
-export type PageType = "HOME" | "TOOLS" | "CHALLENGE" | "AI_PROJECT" | "CONTACT";
+export type PageType = "HOME" | "TOOLS" | "CHALLENGE" | "AI_PROJECT" | "ABOUT_CONTACT";
+export type Language = "vi" | "en";
 
 export interface LevelData {
-  // Added id and difficulty to match the data structure used in LEVELS in data.ts
   id: string;
   title: string;
   difficulty: string;
   desc: string;
   hint: string;
-  fake_pos: 1 | 2; // 1: Left (Trái), 2: Right (Phải)
+  fake_pos: 1 | 2;
   advice: string;
-  video_url: string; // Link video youtube đã edit 2 khung hình
+  video_url: string;
+}
+
+export interface EnhancedLevelData extends LevelData {
+  technical_flaws: {
+    feature: string;
+    real_behavior: string;
+    ai_error: string;
+  }[];
 }
 
 export interface GameState {
@@ -18,36 +26,16 @@ export interface GameState {
   current: number;
   score: number;
   wrong_count: number;
-  wrong_topics: string[]; // Lưu lại tên các chủ đề bị sai để thống kê
+  wrong_topics: string[];
   finished: boolean;
   show_result: boolean;
   last_correct: boolean | null;
 }
 
-// === NEW TYPES FOR PERSONALITY TEST & ANALYTICS ===
-export type LikertScale = 1 | 2 | 3 | 4 | 5; // 1: Strongly Disagree -> 5: Strongly Agree
-
 export interface PersonalityQuestion {
   id: string;
   text: string;
   trait: "CONFIDENCE" | "ANXIETY" | "SKEPTICISM" | "AWARENESS";
-}
-
-export interface PersonalityTestResult {
-  answers: Record<string, LikertScale>; // questionId -> value
-}
-
-export interface GameHistoryItem {
-  id: string;
-  timestamp: number;
-  score: number;
-  wrong_topics: string[];
-  personality: PersonalityTestResult | null;
-}
-
-export interface UserSession {
-  username: string;
-  history: GameHistoryItem[];
 }
 
 export interface ChecklistItem {
