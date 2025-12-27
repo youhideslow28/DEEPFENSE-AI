@@ -1,4 +1,3 @@
-
 import { EnhancedLevelData, ChecklistItem, NewsItem, FunFact, PersonalityQuestion, Language } from './types';
 
 export const TRANSLATIONS: Record<Language, any> = {
@@ -11,7 +10,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     btn_ai: "AI ENGINE",
     warning_center: "TRUNG TÂM CẢNH BÁO",
     hotline: "HOTLINE PHẢN ỨNG NHANH",
-    knowledge: "KIẾN THỨC CỐT LỐI",
+    knowledge: "BẠN CÓ BIẾT?",
     about_us: "VỀ CHÚNG TÔI & LIÊN HỆ",
     mission: "SỨ MỆNH",
     vision: "TẦM NHÌN",
@@ -37,7 +36,7 @@ export const TRANSLATIONS: Record<Language, any> = {
     btn_ai: "AI ENGINE",
     warning_center: "WARNING CENTER",
     hotline: "EMERGENCY HOTLINE",
-    knowledge: "CORE KNOWLEDGE",
+    knowledge: "DID YOU KNOW?",
     about_us: "ABOUT US & CONTACT",
     mission: "MISSION",
     vision: "VISION",
@@ -58,28 +57,28 @@ export const TRANSLATIONS: Record<Language, any> = {
 
 export const LEVELS: Record<Language, EnhancedLevelData[]> = {
   vi: [
-    { id: "v1", title: "GIA ĐÌNH LEGO", difficulty: "Dễ", desc: "Soi kỹ bàn tay nhân vật.", hint: "AI thường làm dính các ngón tay.", fake_pos: 2, advice: "Lỗi dính ngón tay và mặt biến dạng khi quay. AI chưa giỏi vẽ cấu trúc xương tay phức tạp.", video_url: "https://youtu.be/UOaKSgHVARM", technical_flaws: [] },
-    { id: "v2", title: "BÀN TAY DƯỚI TÁN CÂY", difficulty: "Dễ", desc: "Quan sát bề mặt da tay.", hint: "AI thường làm da quá mịn hoặc thiếu độ trong mờ.", fake_pos: 2, advice: "Da tay mịn như sáp và thiếu độ trong mờ tự nhiên. Người thật có vân da và mạch máu mờ.", video_url: "https://youtu.be/OO8p3jN7TBQ", technical_flaws: [] },
-    { id: "v3", title: "HƯƠU CAO CỔ", difficulty: "Trung bình", desc: "Để ý chân hươu khi di chuyển.", hint: "Kiểm tra sự tiếp xúc giữa chân và mặt đất.", fake_pos: 1, advice: "Chân bị trượt trên cỏ và tách nền lộ liễu. AI gặp khó khăn trong việc gắn kết vật thể vào nền.", video_url: "https://youtu.be/hglX1Q93en8", technical_flaws: [] },
-    { id: "v4", title: "CHUỒN CHUỒN", difficulty: "Trung bình", desc: "Quan sát kỹ đôi cánh.", hint: "Các chi tiết cực nhỏ như gân cánh thường bị AI làm mờ.", fake_pos: 2, advice: "Cánh bị mờ và thiếu chi tiết gân cánh. AI thường lược bỏ các vân li ti khi chuyển động nhanh.", video_url: "https://youtu.be/-wenF_aW-gM", technical_flaws: [] },
-    { id: "v5", title: "THIÊN NGA", difficulty: "Khó", desc: "Nhìn vào phần hình ảnh phản chiếu.", hint: "AI thường sai lệch quy luật vật lý của bóng đổ và phản chiếu.", fake_pos: 1, advice: "Phản chiếu dưới nước không khớp chuyển động. Sóng nước chuyển động phi vật lý.", video_url: "https://youtu.be/pP3-hpkg6Ps", technical_flaws: [] },
-    { id: "v6", title: "THÁC NƯỚC", difficulty: "Khó", desc: "Quan sát dòng nước chảy.", hint: "Nước AI thường trông giống khói hoặc bị lặp lại (loop).", fake_pos: 2, advice: "Dòng nước giống khói và chuyển động lặp lại (loop). Thiếu sự hỗn loạn tự nhiên của nước thật.", video_url: "https://youtu.be/J52kFGgVMpc", technical_flaws: [] },
-    { id: "v7", title: "HOÀNG HÔN", difficulty: "Khó", desc: "Để ý các đám mây.", hint: "AI làm mây bị biến dạng/tan chảy thay vì trôi.", fake_pos: 2, advice: "Mây bị biến hình và tan chảy tại chỗ. Quy luật trôi của mây bị phá vỡ.", video_url: "https://youtu.be/jLXuTEAd0eY", technical_flaws: [] },
-    { id: "v8", title: "RỪNG CÂY SƯƠNG MÙ", difficulty: "Khó", desc: "Nhìn vào chuyển động sương.", hint: "Sương mù AI thường trôi phi vật lý.", fake_pos: 2, advice: "Sương mù di chuyển không tự nhiên. AI thường render sương mù như một lớp phủ phẳng.", video_url: "https://youtu.be/7T0pGbJJcnE", technical_flaws: [] },
-    { id: "v9", title: "PHI THUYỀN KHÔNG GIAN", difficulty: "Rất khó", desc: "Để ý tia lửa xẹt.", hint: "AI khó xử lý các hạt vật chất nhỏ và tia sáng động.", fake_pos: 2, advice: "Tia lửa bị nhấp nháy bất thường. Các hạt vật chất li ti thường bị AI làm biến dạng.", video_url: "https://youtu.be/AQ8VkGH9hk0", technical_flaws: [] },
-    { id: "v10", title: "MÁY ÉP THỦY LỰC", difficulty: "Rất khó", desc: "Quan sát nước dừa khi bị ép.", hint: "Nước thật phải bắn tung tóe, không loang dẻo.", fake_pos: 1, advice: "Nước dừa loang ra như thạch và vỏ dừa biến dạng dẻo. AI sai quy luật vật lý của chất lỏng.", video_url: "https://youtu.be/8Kmnc2jGE74", technical_flaws: [] }
+    { id: "v1", title: "Gia đình Lego", difficulty: "Dễ", desc: "Soi kỹ bàn tay và khuôn mặt nhân vật.", hint: "Chú ý ngón tay và biến dạng khi quay đầu.", fake_pos: 2, advice: "Ngón tay người ông bị dính vào nhau, khuôn mặt bé gái bị biến dạng mờ nhòe khi quay đầu.", video_url: "https://youtu.be/UOaKSgHVARM", technical_flaws: [] },
+    { id: "v2", title: "Nhóm người chụm tay", difficulty: "Khó", desc: "Quan sát bề mặt da tay.", hint: "AI thường làm da quá mịn hoặc thiếu độ trong mờ.", fake_pos: 1, advice: "Da tay quá mịn như sáp, thiếu độ trong mờ tự nhiên (subsurface scattering) và chi tiết lỗ chân lông/nếp nhăn.", video_url: "https://youtu.be/OO8p3jN7TBQ", technical_flaws: [] },
+    { id: "v3", title: "Hươu cao cổ", difficulty: "Trung bình", desc: "Để ý chân hươu khi di chuyển.", hint: "Kiểm tra sự tiếp xúc giữa chân và mặt đất.", fake_pos: 1, advice: "Chân hươu bước đi trượt trên cỏ (moonwalking), tách nền (background separation) giữa hươu và núi bị lỗi.", video_url: "https://youtu.be/hglX1Q93en8", technical_flaws: [] },
+    { id: "v4", title: "Chuồn chuồn", difficulty: "Dễ", desc: "Quan sát kỹ đôi cánh.", hint: "Các chi tiết cực nhỏ thường bị AI làm mờ.", fake_pos: 2, advice: "Cánh chuồn chuồn nhìn như nhựa đục, thiếu chi tiết gân cánh sắc nét, đôi khi hòa lẫn vào thân.", video_url: "https://youtu.be/-wenF_aW-gM", technical_flaws: [] },
+    { id: "v5", title: "Thiên nga", difficulty: "Trung bình", desc: "Nhìn vào phần hình ảnh phản chiếu.", hint: "AI phản chiếu thường sai lệch quy luật vật lý.", fake_pos: 1, advice: "Hình phản chiếu dưới nước bị méo mó, sóng nước di chuyển không khớp với hướng bơi của thiên nga.", video_url: "https://youtu.be/pP3-hpkg6Ps", technical_flaws: [] },
+    { id: "v6", title: "Thác nước", difficulty: "Khó", desc: "Quan sát dòng nước chảy.", hint: "Nước AI thường trông giống khói.", fake_pos: 2, advice: "Dòng nước đổ xuống nhìn giống sương khói mờ ảo, chuyển động lặp lại (loop) thiếu sức nặng của nước.", video_url: "https://youtu.be/J52kFGgVMpc", technical_flaws: [] },
+    { id: "v7", title: "Hoàng hôn", difficulty: "Khó", desc: "Để ý các đám mây.", hint: "AI làm mây bị biến dạng/tan chảy.", fake_pos: 1, advice: "Các đám mây di chuyển bất thường, tự tan chảy hoặc biến hình (morphing) tại chỗ thay vì trôi theo gió.", video_url: "https://youtu.be/jLXuTEAd0eY", technical_flaws: [] },
+    { id: "v8", title: "Cắt cát dưa hấu", difficulty: "Dễ", desc: "Nhìn vào kết cấu cát khi bị cắt.", hint: "Cát thật có độ tơi xốp đặc trưng.", fake_pos: 1, advice: "Khối cát bị cắt trông dẻo như cao su/đất sét, không có độ tơi xốp và rơi vụn tự nhiên của cát động lực.", video_url: "https://youtu.be/7T0pGbJJcnE", technical_flaws: [] },
+    { id: "v9", title: "Múc cát xanh", difficulty: "Dễ", desc: "Để ý vết lõm sau khi múc.", hint: "AI khó xử lý sự thay đổi hình khối liên tục.", fake_pos: 1, advice: "Cát sau khi múc để lại vết lõm bị méo mó, hoặc cát tự động \"liền\" lại một cách phi vật lý.", video_url: "https://youtu.be/AQ8VkGH9hk0", technical_flaws: [] },
+    { id: "v10", title: "Máy ép thủy lực", difficulty: "Dễ", desc: "Quan sát nước khi bị ép mạnh.", hint: "Vật lý chất lỏng là điểm yếu của AI.", fake_pos: 2, advice: "Chất lỏng bắn ra quá dữ dội hoặc có hình dáng/màu sắc thiếu tự nhiên so với lực ép thực tế, các mảnh vỡ bay ra không theo quy luật vật lý.", video_url: "https://youtu.be/8Kmnc2jGE74", technical_flaws: [] }
   ],
   en: [
-    { id: "v1", title: "LEGO FAMILY", difficulty: "Easy", desc: "Check character hands.", hint: "AI often merges fingers.", fake_pos: 2, advice: "Merged fingers and facial distortion. AI struggles with complex bone structures.", video_url: "https://youtu.be/UOaKSgHVARM", technical_flaws: [] },
-    { id: "v2", title: "HAND UNDER TREE", difficulty: "Easy", desc: "Observe hand skin texture.", hint: "AI skin looks too smooth or waxy.", fake_pos: 2, advice: "Waxy skin and lack of natural subsurface scattering. Real skin has subtle veins.", video_url: "https://youtu.be/OO8p3jN7TBQ", technical_flaws: [] },
-    { id: "v3", title: "GIRAFFE", difficulty: "Medium", desc: "Watch the feet while moving.", hint: "Check the contact point between feet and ground.", fake_pos: 1, advice: "Sliding feet on grass and poor edge blending. AI fails to anchor objects properly.", video_url: "https://youtu.be/hglX1Q93en8", technical_flaws: [] },
-    { id: "v4", title: "DRAGONFLY", difficulty: "Medium", desc: "Observe the wings closely.", hint: "Fine details like wing veins often get blurred.", fake_pos: 2, advice: "Blurry wings and missing vein details. AI tends to smooth out micro-textures.", video_url: "https://youtu.be/-wenF_aW-gM", technical_flaws: [] },
-    { id: "v5", title: "SWAN", difficulty: "Hard", desc: "Look at the water reflection.", hint: "AI reflections often mismatch physical movements.", fake_pos: 1, advice: "Reflection mismatch and non-physical water waves. AI fails light/water physics.", video_url: "https://youtu.be/pP3-hpkg6Ps", technical_flaws: [] },
-    { id: "v6", title: "WATERFALL", difficulty: "Hard", desc: "Observe the water flow.", hint: "AI water looks like smoke or has noticeable loops.", fake_pos: 2, advice: "Water looks like smoke with repetitive loops. Lacks natural chaos of real water.", video_url: "https://youtu.be/J52kFGgVMpc", technical_flaws: [] },
-    { id: "v7", title: "SUNSET", difficulty: "Hard", desc: "Watch the clouds.", hint: "AI clouds often morph/melt instead of drifting.", fake_pos: 2, advice: "Clouds morphing and melting in place. Drifting laws are broken.", video_url: "https://youtu.be/jLXuTEAd0eY", technical_flaws: [] },
-    { id: "v8", title: "FOGGY FOREST", difficulty: "Hard", desc: "Look at fog movement.", hint: "AI fog often drifts non-physically.", fake_pos: 2, advice: "Unnatural fog movement. AI renders fog as a flat overlay instead of volume.", video_url: "https://youtu.be/7T0pGbJJcnE", technical_flaws: [] },
-    { id: "v9", title: "SPACE SHIP", difficulty: "Expert", desc: "Watch the sparks.", hint: "AI struggles with small particles and dynamic light.", fake_pos: 2, advice: "Abnormal flickering sparks. Small particles often get distorted by AI.", video_url: "https://youtu.be/AQ8VkGH9hk0", technical_flaws: [] },
-    { id: "v10", title: "HYDRAULIC PRESS", difficulty: "Expert", desc: "Watch the coconut water.", hint: "Real water splashes, doesn't spread like jelly.", fake_pos: 1, advice: "Coconut water spreads like jelly and shell deforms like plastic. Failed physics.", video_url: "https://youtu.be/8Kmnc2jGE74", technical_flaws: [] }
+    { id: "v1", title: "Lego Family", difficulty: "Easy", desc: "Check hands and faces.", hint: "Watch fingers and head rotation distortion.", fake_pos: 2, advice: "Grandfather's fingers are fused, girl's face distorts when turning head.", video_url: "https://youtu.be/UOaKSgHVARM", technical_flaws: [] },
+    { id: "v2", title: "Hand Cluster", difficulty: "Hard", desc: "Observe hand skin surface.", hint: "AI skin is often too smooth or lacks subsurface scattering.", fake_pos: 1, advice: "Skin is too waxy, missing natural translucency and pore/wrinkle details.", video_url: "https://youtu.be/OO8p3jN7TBQ", technical_flaws: [] },
+    { id: "v3", title: "Giraffe", difficulty: "Medium", desc: "Watch feet during movement.", hint: "Check ground contact.", fake_pos: 1, advice: "Giraffe slides on grass (moonwalking), background separation from mountains is glitched.", video_url: "https://youtu.be/hglX1Q93en8", technical_flaws: [] },
+    { id: "v4", title: "Dragonfly", difficulty: "Easy", desc: "Observe wings closely.", hint: "Fine details are often blurred by AI.", fake_pos: 2, advice: "Wings look like opaque plastic, missing sharp vein details, blending into the body.", video_url: "https://youtu.be/-wenF_aW-gM", technical_flaws: [] },
+    { id: "v5", title: "Swan", difficulty: "Medium", desc: "Look at the water reflection.", hint: "AI reflections often break physics laws.", fake_pos: 1, advice: "Water reflection is distorted, waves don't match the swan's swimming direction.", video_url: "https://youtu.be/pP3-hpkg6Ps", technical_flaws: [] },
+    { id: "v6", title: "Waterfall", difficulty: "Hard", desc: "Observe flowing water.", hint: "AI water often looks like smoke/mist.", fake_pos: 2, advice: "Water looks like mist, repetitive loops lack water's weight.", video_url: "https://youtu.be/J52kFGgVMpc", technical_flaws: [] },
+    { id: "v7", title: "Sunset", difficulty: "Hard", desc: "Watch the clouds.", hint: "AI morphs or melts clouds.", fake_pos: 1, advice: "Clouds move abnormally, melting or morphing instead of drifting with wind.", video_url: "https://youtu.be/jLXuTEAd0eY", technical_flaws: [] },
+    { id: "v8", title: "Sand Cutting", difficulty: "Easy", desc: "Observe sand texture when cut.", hint: "Real sand has specific crumble.", fake_pos: 1, advice: "Sand block looks rubbery like clay, missing natural crumble of kinetic sand.", video_url: "https://youtu.be/7T0pGbJJcnE", technical_flaws: [] },
+    { id: "v9", title: "Blue Sand Scoop", difficulty: "Easy", desc: "Observe scoop depression.", hint: "AI struggles with continuous shape change.", fake_pos: 1, advice: "Scooped area is distorted or 'heals' in a non-physical way.", video_url: "https://youtu.be/AQ8VkGH9hk0", technical_flaws: [] },
+    { id: "v10", title: "Hydraulic Press", difficulty: "Easy", desc: "Observe liquid under pressure.", hint: "Fluid physics is an AI weakness.", fake_pos: 2, advice: "Liquid splash is too violent or unnatural, debris violates physics laws.", video_url: "https://youtu.be/8Kmnc2jGE74", technical_flaws: [] }
   ]
 };
 
@@ -114,11 +113,11 @@ export const FUN_FACTS: Record<Language, FunFact[]> = {
 export const KNOWLEDGE_BASE: Record<Language, any[]> = {
   vi: [
     {
-      category: "⚖️ PHÁP LUẬT VIỆT NAM",
+      category: "💡 BẠN CÓ BIẾT?",
       items: [
-        { title: "Tội lừa đảo chiếm đoạt tài sản", content: "Theo Điều 174 Bộ luật Hình sự 2015, hành vi sử dụng công nghệ cao (Deepfake) để lừa đảo có thể bị phạt tù từ 2 năm đến chung thân tùy mức độ thiệt hại." },
-        { title: "Nghị định 13/2023/NĐ-CP", content: "Quy định nghiêm ngặt về bảo vệ dữ liệu cá nhân. Việc sử dụng hình ảnh người khác tạo Deepfake khi chưa được phép là vi phạm pháp luật." },
-        { title: "Xử phạt hành chính", content: "Phạt tiền từ 10 - 20 triệu đồng đối với hành vi cung cấp, chia sẻ thông tin giả mạo, sai sự thật trên mạng xã hội." }
+        { title: "Deepfake '3 giây'", content: "Chỉ cần 3 giây mẫu âm thanh, kẻ xấu có thể giả dạng giọng nói của bất kỳ ai với độ chính xác kinh ngạc." },
+        { title: "Artifacts là gì?", content: "Đó là những lỗi nhỏ trong video AI (như răng mờ, mắt nháy lệch) mà chỉ khi soi kỹ chúng ta mới phát hiện được." },
+        { title: "Bóng đổ 'phản chủ'", content: "AI rất giỏi vẽ mặt nhưng rất tệ khi vẽ bóng đổ. Luôn soi bóng mũi để tìm vết nứt của sự thật." }
       ]
     },
     {
@@ -130,21 +129,20 @@ export const KNOWLEDGE_BASE: Record<Language, any[]> = {
       ]
     },
     {
-      category: "📱 KỸ THUẬT CƠ BẢN",
+      category: "⚖️ PHÁP LUẬT VIỆT NAM",
       items: [
-        { title: "Kiểm tra SIM GSM", content: "Luôn gọi lại vào số điện thoại thường (không qua app) để xác nhận. Deepfake chỉ hoạt động trên môi trường internet." },
-        { title: "Soi bóng đổ", content: "Nhìn vào bóng của mũi hoặc khuyên tai. AI thường render bóng đổ sai hướng so với nguồn sáng thực tế." },
-        { title: "Độ trễ âm thanh", content: "Nếu âm thanh và hình ảnh lệch nhau dù mạng ổn định, đó là dấu hiệu AI đang xử lý thời gian thực." }
+        { title: "Tội lừa đảo chiếm đoạt tài sản", content: "Theo Điều 174 Bộ luật Hình sự 2015, hành vi sử dụng công nghệ cao (Deepfake) để lừa đảo có thể bị phạt tù từ 2 năm đến chung thân tùy mức độ thiệt hại." },
+        { title: "Nghị định 13/2023/NĐ-CP", content: "Quy định nghiêm ngặt về bảo vệ dữ liệu cá nhân. Việc sử dụng hình ảnh người khác tạo Deepfake khi chưa được phép là vi phạm pháp luật." }
       ]
     }
   ],
   en: [
     {
-      category: "⚖️ VIETNAMESE LAW",
+      category: "💡 DID YOU KNOW?",
       items: [
-        { title: "Fraudulent appropriation of property", content: "According to Article 174 of the 2015 Penal Code, using high technology (Deepfake) for fraud can be punished with 2 years to life imprisonment depending on the damage." },
-        { title: "Decree 13/2023/ND-CP", content: "Strict regulations on personal data protection. Using others' images to create Deepfakes without permission is a violation of the law." },
-        { title: "Administrative penalties", content: "Fines of 10 - 20 million VND for providing or sharing fake or untruthful information on social networks." }
+        { title: "3-Second Voice", content: "With just 3 seconds of audio, bad actors can clone anyone's voice with staggering accuracy." },
+        { title: "What are Artifacts?", content: "Small glitches in AI videos (like blurry teeth or unsynced blinking) that reveal the fake upon close inspection." },
+        { title: "Betraying Shadows", content: "AI is great at faces but terrible at shadows. Always check the nose shadow to find cracks in the lie." }
       ]
     },
     {
@@ -156,11 +154,10 @@ export const KNOWLEDGE_BASE: Record<Language, any[]> = {
       ]
     },
     {
-      category: "📱 BASIC TECHNIQUES",
+      category: "⚖️ VIETNAMESE LAW",
       items: [
-        { title: "GSM SIM Check", content: "Always call back on a regular phone number (not via app) to confirm. Deepfake only works over the internet." },
-        { title: "Shadow Inspection", content: "Look at the shadows of the nose or earrings. AI often renders shadows in the wrong direction relative to the real light source." },
-        { title: "Audio Latency", content: "If sound and image are out of sync despite stable network, it's a sign that AI is processing in real-time." }
+        { title: "Property appropriation fraud", content: "Under Article 174 of the 2015 Penal Code, using Deepfake for fraud can lead to imprisonment from 2 years to life." },
+        { title: "Decree 13/2023/ND-CP", content: "Strict personal data protection. Unauthorized Deepfake creation using others' images is illegal." }
       ]
     }
   ]

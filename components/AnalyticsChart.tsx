@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Brain, Activity, Zap, Shield, Target } from 'lucide-react';
 import { Language } from '../types';
@@ -25,17 +24,17 @@ const AnalyticsChart: React.FC<{ lang: Language }> = ({ lang }) => {
 
   return (
     <div className="bg-[#050505] border border-primary/20 rounded-3xl shadow-2xl h-full w-full flex flex-col font-mono relative overflow-hidden">
-      <div className="relative z-10 bg-black/40 backdrop-blur-md border-b border-white/5 p-5 flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-3">
-          <Activity className="text-primary" size={18} />
+      <div className="relative z-10 bg-black/40 backdrop-blur-md border-b border-white/5 p-4 flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-2">
+          <Activity className="text-primary" size={16} />
           <div className="flex flex-col">
-            <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">{metricsLabels.title}</span>
-            <span className="text-[8px] text-primary/60 font-mono uppercase mt-1">{metricsLabels.status}</span>
+            <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none">{metricsLabels.title}</span>
+            <span className="text-[7px] text-primary/60 font-mono uppercase mt-0.5">{metricsLabels.status}</span>
           </div>
         </div>
-        <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
-          <button onClick={() => setActiveTab('METRICS')} className={`p-2 rounded-lg transition-all ${activeTab === 'METRICS' ? 'bg-primary text-black' : 'text-gray-500'}`}><Zap size={14} /></button>
-          <button onClick={() => setActiveTab('PSYCHOLOGY')} className={`p-2 rounded-lg transition-all ${activeTab === 'PSYCHOLOGY' ? 'bg-primary text-black' : 'text-gray-500'}`}><Brain size={14} /></button>
+        <div className="flex gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
+          <button onClick={() => setActiveTab('METRICS')} className={`p-1.5 rounded-lg transition-all ${activeTab === 'METRICS' ? 'bg-primary text-black' : 'text-gray-500'}`}><Zap size={12} /></button>
+          <button onClick={() => setActiveTab('PSYCHOLOGY')} className={`p-1.5 rounded-lg transition-all ${activeTab === 'PSYCHOLOGY' ? 'bg-primary text-black' : 'text-gray-500'}`}><Brain size={12} /></button>
         </div>
       </div>
 
